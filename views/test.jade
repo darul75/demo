@@ -8,7 +8,7 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
   script(type='text/javascript', src='/javascripts/ng-twitter.js')
   body
    div(ng-app="myApp", ng-controller="ctrl")
-    div(tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="15", refresh="60")
+    div(tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="15", refresh="30")
    script.
     var app = angular.module('myApp', ['ngTwitter']);
     function ctrl($scope, $filter) {
