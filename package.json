@@ -1,0 +1,28 @@
+{
+  "name": "demo",
+  "description": "some demo dudes",
+  "version": "0.0.1",
+  "author": {
+    "name": "Julien Valéry",
+    "email": "darul75@gmail.com"
+  },
+  "homepage": "https://github.com/darul75/demo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darul75/demo.git"
+  },
+  "keywords": [
+  ],
+  "dependencies": {
+      "express": "3.4.4",
+      "jade": "0.35.0",
+      "oauth": "0.9.10"
+  },
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-cssmin": "~0.6.0",
+    "grunt-bower-task": "~0.3.4"
+  }
+}
