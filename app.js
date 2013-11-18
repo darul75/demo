@@ -38,7 +38,9 @@ app.get('/search', function(req, res){
     });
 });
 
-app.listen(8080, function(){
+/*app.listen(8080, function(){*/
+var port = process.env.PORT || 5000;
+app.listen(port, function() {
 	if (!init) {
         twitter.auth(options, function(err, data) {
           init=true;
