@@ -24,5 +24,9 @@
     "grunt-contrib-uglify": "latest",
     "grunt-contrib-cssmin": "~0.6.0",
     "grunt-bower-task": "~0.3.4"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm":  "1.2.x"
   }
 }
