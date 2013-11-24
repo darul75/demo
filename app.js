@@ -2,7 +2,8 @@
 var http = require("http");
 var path = require('path');
 var twitter = require("./twitter.js");
-var express = require('./node_modules/express/index.js');
+var express = require('express');
+var satelize = require('satelize');
 
 //
 var options = {authKey:'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc='};
@@ -29,12 +30,24 @@ app.get('/', function(req, res){
     res.render('test');
 });
 
+app.get('/satelize', function(req, res){ 
+    res.render('satelize');
+});
+
 app.get('/search', function(req, res){ 
 	var hash = req.query.hashtag;
     twitter.query({hashtag:hash}, function(err, data) {
         res.writeHead(200, {"Content-Type": "application/json"});
         var json = JSON.stringify(data);
         res.end(json);
+    });
+});
+
+app.get('/querysatelize', function(req, res){ 
+	var ip = req.query.ip;
+	console.log('ipserver'+ip);
+	satelize.satelize({ip:ip}, function(err, geoData) {
+      res.end(geoData);
     });
 });
 
