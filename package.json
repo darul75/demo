@@ -16,7 +16,9 @@
   "dependencies": {
       "express": "3.4.4",
       "jade": "0.35.0",
-      "oauth": "0.9.10"
+      "oauth": "0.9.10",
+      "ng-prettyjson": "0.0.3",
+      "satelize": "0.0.7"
   },
   "devDependencies": {
     "grunt": "latest",

@@ -1,0 +1,17 @@
+!!!
+doctype 5
+html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:fb='http://ogp.me/ns/fb#')
+ head
+  link(rel='stylesheet',href='/stylesheets/ng-twitter.css')
+  link(rel='stylesheet',href='/stylesheets/ng-prettyjson.css')
+  script(type='text/javascript', src='/bower_components/angular/angular.min.js')
+  script(type='text/javascript', src='/javascripts/ng-satelize.js')
+  script(type='text/javascript', src='/javascripts/ng-prettyjson.js')
+  body
+   div(ng-app="myApp", ng-controller="ctrl")
+    div(satelize, ip="ip")
+   script.
+    var app = angular.module('myApp', ['ngSatelize', 'ngPrettyJson']);
+    function ctrl($scope, $filter) {
+     $scope.ip = '172.45.22.33';
+    }
