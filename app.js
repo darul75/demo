@@ -4,6 +4,7 @@ var path = require('path');
 var twitter = require("./twitter.js");
 var express = require('express');
 var satelize = require('satelize');
+var dynupdate = require('dynupdate');
 
 //
 var options = {authKey:'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc='};
@@ -34,6 +35,10 @@ app.get('/satelize', function(req, res){
     res.render('satelize');
 });
 
+app.get('/dynupdate', function(req, res){ 
+    res.render('dynupdate');
+});
+
 app.get('/search', function(req, res){ 
 	var hash = req.query.hashtag;
     twitter.query({hashtag:hash}, function(err, data) {
@@ -45,9 +50,26 @@ app.get('/search', function(req, res){
 
 app.get('/querysatelize', function(req, res){ 
 	var ip = req.query.ip;
-	console.log('ipserver'+ip);
+	console.log('ip '+ip);
 	satelize.satelize({ip:ip}, function(err, geoData) {
       res.end(geoData);
+    });
+});
+
+app.get('/querydynupdate', function(req, res){ 
+    var domain = req.query.domain;
+	var ip = req.query.ip;
+	var auth = req.query.auth;
+	console.log('domain '+domain);
+	console.log('ip '+ip);
+	console.log('auth '+auth);
+	dynupdate.dynupdate({hostname:domain, auth:auth, myip:ip}, function(err, status) {
+        if (err) {
+            console.log(err);
+            res.end(err.toString());
+            return;
+        }  
+        res.end(status);
     });
 });
 
