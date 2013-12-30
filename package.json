@@ -17,6 +17,7 @@
       "dynupdate": "0.0.3",
       "express": "3.4.4",
       "jade": "0.35.0",
+      "jade-cache": "0.0.4",
       "oauth": "0.9.10",
       "ng-prettyjson": "0.0.3",
       "satelize": "0.0.7",
