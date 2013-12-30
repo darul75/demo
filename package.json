@@ -19,7 +19,8 @@
       "jade": "0.35.0",
       "oauth": "0.9.10",
       "ng-prettyjson": "0.0.3",
-      "satelize": "0.0.7"
+      "satelize": "0.0.7",
+      "starter-aws": "0.0.3"
   },
   "devDependencies": {
     "grunt": "latest",

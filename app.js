@@ -4,7 +4,9 @@ var path = require('path');
 var twitter = require("./twitter.js");
 var express = require('express');
 var satelize = require('satelize');
+var starterAws = require('starter-aws');
 var dynupdate = require('dynupdate');
+var jcc = require('jade-cache');
 
 //
 var options = {authKey:'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc='};
@@ -19,6 +21,7 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view cache', true);
+  app.use(jcc.handle); // activate middleware
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());  
@@ -27,13 +30,33 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
+var options = {debug:true};
+
+jcc.init(options, app, function() {
+  // all is compiled
+  app.enable('jcc'); // mandatory for middleware to be activated
+});
+
 app.get('/', function(req, res){ 
     res.render('test');
+});
+
+/*app.get('/partials/test', function(req, res){ 
+    res.render('partials/test');
+});*/
+
+app.get('/express-cache', function(req, res){ 
+    res.render('nopartials/test');
 });
 
 app.get('/satelize', function(req, res){ 
     res.render('satelize');
 });
+
+app.get('/starter', function(req, res){ 
+    res.render('starter');
+});
+
 
 app.get('/dynupdate', function(req, res){ 
     res.render('dynupdate');
@@ -56,6 +79,19 @@ app.get('/querysatelize', function(req, res){
     });
 });
 
+app.post('/querystarter', function(req, res){ 
+	var options = req.body;
+	console.log('options '+ options.accessKeyId);
+	starterAws.starter(options, function(err, status) {
+        if (err) {
+            console.log(err);
+            res.end(err);
+        }
+        else    
+            res.end(status);
+    });
+});
+
 app.get('/querydynupdate', function(req, res){ 
     var domain = req.query.domain;
 	var ip = req.query.ip;
@@ -71,6 +107,10 @@ app.get('/querydynupdate', function(req, res){
         }  
         res.end(status);
     });
+});
+
+app.get(function(req, res){ 
+    console.log('toto');
 });
 
 /*app.listen(8080, function(){*/
