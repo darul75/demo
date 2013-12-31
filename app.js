@@ -8,9 +8,6 @@ var starterAws = require('starter-aws');
 var dynupdate = require('dynupdate');
 var jcc = require('jade-cache');
 
-//
-var options = {authKey:'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc='};
-
 var init = false; 
 
 var app = express();
@@ -36,6 +33,10 @@ jcc.init(options, app, function() {
   // all is compiled
   app.enable('jcc'); // mandatory for middleware to be activated
 });
+
+// starter
+
+starterAws.daemon(function(err, o) {console.log(o)});
 
 app.get('/', function(req, res){ 
     res.render('test');
@@ -82,10 +83,13 @@ app.get('/querysatelize', function(req, res){
 app.post('/querystarter', function(req, res){ 
 	var options = req.body;
 	console.log('options '+ options.accessKeyId);
-	starterAws.starter(options, function(err, status) {
+
+  starterAws.initCredentials(options);
+
+	starterAws.starter(function(err, status) {
         if (err) {
             console.log(err);
-            res.end(err);
+            res.json({'error':err.toString()});
         }
         else    
             res.end(status);
