@@ -86,7 +86,7 @@
 					scope.stopDaemon = function() {
 					    scope.options.state = 'start'; 
 						starter.asyncStarterDaemonStop(scope.options).then(function(d) {
-							scope.json2 = {json2: d.data};
+							scope.json2 = {json: d.data};
 						});
 					};
 		
