@@ -82,18 +82,42 @@ app.get('/querysatelize', function(req, res){
 
 app.post('/querystarter', function(req, res){ 
 	var options = req.body;
-	console.log('options '+ options.accessKeyId);
 
   starterAws.initCredentials(options);
 
 	starterAws.starter(function(err, status) {
-        if (err) {
-            console.log(err);
-            res.json({'error':err.toString()});
-        }
-        else    
-            res.end(status);
+      if (err) {
+          console.log(err);
+          res.json({'error':err.toString()});
+      }
+      else    
+          res.end(status);
     });
+});
+
+app.post('/querystarterdaemonstart', function(req, res){ 
+  var options = req.body;
+
+  starterAws.initCredentials(options);
+
+  starterAws.daemon(function(err, states) {
+      if (err) {
+          console.log(err);
+          res.json({'error':err.toString()});
+      }
+      else    
+          res.json(states);
+    });
+});
+
+app.post('/querystarterdaemonstop', function(req, res){ 
+  var options = req.body;
+
+  starterAws.initCredentials(options);
+
+  starterAws.daemonStop();
+
+  res.json({status:'ok'})
 });
 
 app.get('/querydynupdate', function(req, res){ 
