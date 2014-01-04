@@ -1,0 +1,66 @@
+!!!
+doctype 5
+html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:fb='http://ogp.me/ns/fb#')
+ head
+  link(rel='stylesheet',href='/stylesheets/ng-twitter.css')
+  link(rel='stylesheet',href='/stylesheets/ng-prettyjson.css')
+  link(rel='stylesheet',href='/stylesheets/prism.css')
+  link(rel='stylesheet',href='/stylesheets/stylesheet.css')
+  link(rel='stylesheet',href='/bower_components/ngprogress/ngProgress.css')
+  script(type='text/javascript', src='http://code.jquery.com/jquery-latest.js')
+  script(type='text/javascript', src='/bower_components/angular/angular.min.js')  
+  script(type='text/javascript', src='/javascripts/ng-captureweb.js')
+  script(type='text/javascript', src='/javascripts/ng-prettyjson.js')  
+  script(type="text/javascript", src="/bower_components/ngprogress/build/ngProgress.min.js")    
+  body
+
+   div.wrapper(ng-app="myApp", ng-controller="ctrl")
+    <!-- HEADER -->
+    div.outer(id="header_wrap")
+      header
+        h1(id="project_title") CaptureWeb
+        p Capture some website as image/pdf with your resolution. Happy 2014 !
+        //- ul
+        //-   li
+        //-     a(href="https://github.com/darul75/captureweb/")
+        //-       p View on 
+        //-         strong GitHub
+      <!-- MAIN CONTENT -->
+    div.oute(id="main_content_wrap")
+      section.inner(id="main_content")
+        h3
+          a(name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages")
+            span.octicon.octicon-link
+          p Welcome
+
+        p 1. Capture any page from the web with different resolutions
+        p 2. Save it as a pdf or png file  
+
+        div(captureweb, url="url")
+        div
+            script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
+       script.
+        var app = angular.module('myApp', ['ngCaptureWeb', 'ngPrettyJson', 'ngProgress']);
+        function ctrl($scope, $filter) {      
+          $scope.url = 'https://github.com';
+        }
+
+    <!-- FOOTER  -->
+    div(id="footer_wrap" class="outer")
+      footer.inner
+        p(class="copyright") maintained by 
+          a(href="https://github.com/darul75") darul75
+        p Published with 
+          a(href="http://pages.github.com") GitHub Pages — Theme by 
+          a(href="https://github.com/orderedlist") orderedlist
+
+  script.
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+     
+  script.          
+    try {
+      var pageTracker = _gat._getTracker("captureweb");
+    pageTracker._trackPageview();
+    } catch(err) {}
+    

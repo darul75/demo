@@ -7,6 +7,8 @@ var satelize = require('satelize');
 var starterAws = require('starter-aws');
 var dynupdate = require('dynupdate');
 var jcc = require('jade-cache');
+var captureweb = require('captureweb');
+var base64encode = require('base64-stream').Encode;
 
 var init = false; 
 
@@ -17,7 +19,7 @@ app.configure(function(){
   //app.set('port', process.env.PORT || 4000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.set('view cache', true);
+  //app.set('view cache', true);
   app.use(jcc.handle); // activate middleware
   app.use(express.favicon());
   app.use(express.logger('dev'));
@@ -31,7 +33,7 @@ var options = {debug:true};
 
 jcc.init(options, app, function() {
   // all is compiled
-  app.enable('jcc'); // mandatory for middleware to be activated
+  //app.enable('jcc'); // mandatory for middleware to be activated
 });
 
 // starter
@@ -54,13 +56,50 @@ app.get('/satelize', function(req, res){
     res.render('satelize');
 });
 
+app.get('/captureweb', function(req, res){ 
+    res.render('captureweb');
+});
+
 app.get('/starter', function(req, res){ 
     res.render('starter');
 });
 
-
 app.get('/dynupdate', function(req, res){ 
     res.render('dynupdate');
+});
+
+app.post('/capturewebquery', function(req, res){ 
+  var params = req.body;
+
+    captureweb.capture(params, function(err, stream) {
+         if (err) {          
+          res.setHeader('Content-Type', 'text/html');
+          res.write(err.toString());
+          res.end();
+          return;          
+        }
+
+        res.writeHead(200, {'Content-Type' : params.mime});
+
+        stream.pipe(base64encode()).pipe(res);
+    });
+});
+
+app.post('/capturewebquerypdf', function(req, res){ 
+  var params = req.body;
+
+    captureweb.capture(params, function(err, stream) {
+         if (err) {          
+          res.setHeader('Content-Type', 'text/html');
+          res.write(err.toString());
+          res.end();
+          return;          
+        }
+
+        res.writeHead(200, {'Content-Type' : params.mime});
+
+        stream.pipe(base64encode()).pipe(res);
+    });
 });
 
 app.get('/search', function(req, res){ 
