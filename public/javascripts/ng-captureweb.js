@@ -31,7 +31,7 @@
 					'<div class="panel">' + 
                         '<table><tr><td>Url</td><td><input type="text" name="input" ng-model="url"></td></tr>' +
                         '<tr ng-repeat="u in urls"><td></td><td><a href="#" ng-click="setUrl(u.url);">{{u.name}}</a></td></tr>' +                                               
-                        '<tr><td>Resolution</td><td><select ng-model="resolution" ng-options="r.name for r in resolutions"></select></td></tr><table>' +												
+                        '<tr><td>Resolution</td><td><select ng-model="resolution" ng-options="r.id for r in resolutions"></select></td></tr><table>' +												
 					'</div><div>' +
                         '<pre json="jsonImage" pretty-json />' +
                         '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button>' +
@@ -46,19 +46,19 @@
                     scope.jsonImage = {json: {'info': 'below will your image displayed => click Capture as IMAGE button first'}};
                     scope.jsonPdf = {json: {'info': 'below will your pdf displayed => click Capture as PDF button first'}};                   
                     scope.resolutions = [
-					    {name:'420 480'},
-					    {name:'800 480'},
-					    {name:'960 640'},
-					    {name:'1280 800'},
-					    {name:'1024 768'},
-					    {name:'1280 800'},
-					    {name:'1024 600'},
-					    {name:'1280 800'},
-					    {name:'2048 1536'},
-					    {name:'1440 900'},
-					    {name:'2560 1440'},
-					    {name:'2880 1800'}
-					  ];					  
+					    {id: 'iPhone 3GS', name:'420 480'},
+					    {id: 'Nokia N900', name:'800 480'},
+					    {id: 'iPhone 4s', name:'960 640'},
+					    {id: 'Galaxy Notes', name:'1280 800'},
+					    {id: 'iPad 2', name:'1024 768'},
+					    {id: 'Galaxy Tab 10,1', name:'1280 800'},
+					    {id: 'Playbook', name:'1024 600'},
+					    {id: 'Galaxy Tab 8,9', name:'1280 800'},
+					    {id: 'iPad 3', name:'2048 1536'},
+					    {id: 'Macbook Air', name:'1440 900'},
+					    {id: 'iMac', name:'2560 1440'},
+					    {id: 'Macbook pro Retina', name:'2880 1800'}
+					  ];
 
 					scope.urls = [
 						{url: 'http://www.nationalgeographic.fr/', name: 'www.nationalgeographic.fr'},
