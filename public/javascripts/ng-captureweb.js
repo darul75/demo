@@ -68,7 +68,8 @@
 						{id: '100,200,400,500', name:'100,200,400,500'}
 					];  
 
-					scope.urls = [
+					scope.urls = [					
+						{url: 'http://www.vice.com/', name: 'www.vice.com/'},
 						{url: 'http://www.nationalgeographic.fr/', name: 'www.nationalgeographic.fr'},
 						{url: 'https://maps.google.com/maps/ms?f=q&hl=fr&geocode=&ie=UTF8&msa=0&msid=101908501337757093341.000443bee508411eb6e9a&ll=48.874383,2.372553&spn=0.008581,0.020084&iwloc=00044e3190ebe22c0b86c&source=embed', name: 'gmap example'},
 						{url: 'http://rue89.nouvelobs.com/', name: 'rue89.nouvelobs.com'}
