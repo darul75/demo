@@ -15,6 +15,7 @@
   ],
   "dependencies": {
       "base64-stream": "0.1.2",
+      "captureweb": "0.0.5",
       "dynupdate": "0.0.3",
       "express": "3.4.4",
       "jade": "0.35.0",
@@ -22,8 +23,7 @@
       "oauth": "0.9.10",
       "ng-prettyjson": "0.0.3",
       "satelize": "0.0.7",
-      "starter-aws": "0.0.6",
-      "captureweb": "0.0.2"
+      "starter-aws": "0.0.6"      
   },
   "devDependencies": {
     "grunt": "latest",

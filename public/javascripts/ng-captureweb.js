@@ -31,8 +31,10 @@
 					'<div class="panel">' + 
                         '<table><tr><td>Url</td><td><input type="text" name="input" ng-model="url"></td></tr>' +
                         '<tr ng-repeat="u in urls"><td></td><td><a href="#" ng-click="setUrl(u.url);">{{u.name}}</a></td></tr>' +                                               
-                        '<tr><td>Resolution</td><td><select ng-model="resolution" ng-options="r.id for r in resolutions"></select></td></tr><table>' +												
-					'</div><div>' +
+                        '<tr><td>Resolution</td><td><select ng-model="resolution" ng-options="r.id for r in resolutions"></select></td></tr>' +
+                        '<tr><td>Clip (top,left,width,left)</td><td><input ng-model="rect" type="text"/></td></tr>' +
+                        '<tr ng-repeat="c in clips"><td></td><td><a href="#" ng-click="setClip(c.name);">{{c.id}}</a></td></tr></table>' +  
+					'</div><div class="panel">' +
                         '<pre json="jsonImage" pretty-json />' +
                         '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button>' +
                         '<pre json="jsonPdf" pretty-json />' +
@@ -46,19 +48,25 @@
                     scope.jsonImage = {json: {'info': 'below will your image displayed => click Capture as IMAGE button first'}};
                     scope.jsonPdf = {json: {'info': 'below will your pdf displayed => click Capture as PDF button first'}};                   
                     scope.resolutions = [
-						{id: 'iPhone 3GS', name:'420 480'},
-						{id: 'Nokia N900', name:'800 480'},
-						{id: 'iPhone 4s', name:'960 640'},
-						{id: 'Galaxy Notes', name:'1280 800'},
-						{id: 'iPad 2', name:'1024 768'},
-						{id: 'Galaxy Tab 10,1', name:'1280 800'},
-						{id: 'Playbook', name:'1024 600'},
-						{id: 'Galaxy Tab 8,9', name:'1280 800'},
-						{id: 'iPad 3', name:'2048 1536'},
-						{id: 'Macbook Air', name:'1440 900'},
-						{id: 'iMac', name:'2560 1440'},
-						{id: 'Macbook pro Retina', name:'2880 1800'}
+						{id: 'iPhone 3GS', name:'420x480'},
+						{id: 'Nokia N900', name:'800x480'},
+						{id: 'iPhone 4s', name:'960x640'},
+						{id: 'Galaxy Notes', name:'1280x800'},
+						{id: 'iPad 2', name:'1024x768'},
+						{id: 'Galaxy Tab 10,1', name:'1280x800'},
+						{id: 'Playbook', name:'1024x600'},
+						{id: 'Galaxy Tab 8,9', name:'1280x800'},
+						{id: 'iPad 3', name:'2048x1536'},
+						{id: 'Macbook Air', name:'1440x900'},
+						{id: 'iMac', name:'2560x1440'},
+						{id: 'Macbook pro Retina', name:'2880x1800'}
 					  ];
+
+					scope.clips = [						
+						{id: '100,200,200,300', name:'100,200,200,300'},
+						{id: '100,200,300,400', name:'100,200,300,400'},
+						{id: '100,200,400,500', name:'100,200,400,500'}
+					];  
 
 					scope.urls = [
 						{url: 'http://www.nationalgeographic.fr/', name: 'www.nationalgeographic.fr'},
@@ -74,16 +82,23 @@
 					    location.href = url;
 					};
 
-					scope.setUrl = function(url) {
-						scope.url = url;
-					}
+					scope.setClip = function(clip) { scope.rect = clip; }
+					scope.setUrl = function(url) { scope.url = url; }
 
 					scope.captureweb = function() {
 						var param = {
 							url: scope.url, 
                      		mime: 'image/png', 
-                     		viewportSize: { width: scope.resolution.name.split(' ')[0], height: scope.resolution.name.split(' ')[1] }
+                     		viewportSize: { w: scope.resolution.name.split('x')[0], h: scope.resolution.name.split('x')[1] }
                      	};
+
+                     	if (scope.rect)
+                     		param.viewportRect = {
+                     			top: scope.rect.split(',')[0], 
+                     			left: scope.rect.split(',')[1],
+                     			w: scope.rect.split(',')[2],
+                     			h: scope.rect.split(',')[3]
+                     		};
 
                      	ngProgress.start();
 
@@ -99,8 +114,16 @@
 						var param = {
 							url: scope.url, 
                      		mime: 'application/pdf', 
-                     		viewportSize: { width: scope.resolution.name.split(' ')[0], height: scope.resolution.name.split(' ')[1] }
+                     		viewportSize: { w: scope.resolution.name.split('x')[0], h: scope.resolution.name.split('x')[1] }
                      	};
+
+                     	if (scope.rect)
+                     		param.viewportRect = {
+                     			top: scope.rect.split(',')[0], 
+                     			left: scope.rect.split(',')[1],
+                     			w: scope.rect.split(',')[2],
+                     			h: scope.rect.split(',')[3]
+                     		};
 
                      	ngProgress.start();                     	
 
