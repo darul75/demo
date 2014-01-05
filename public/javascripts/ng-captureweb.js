@@ -48,18 +48,18 @@
                     scope.jsonImage = {json: {'info': 'below will your image displayed => click Capture as IMAGE button first'}};
                     scope.jsonPdf = {json: {'info': 'below will your pdf displayed => click Capture as PDF button first'}};                   
                     scope.resolutions = [
-						{id: 'iPhone 3GS', name:'420x480'},
-						{id: 'Nokia N900', name:'800x480'},
-						{id: 'iPhone 4s', name:'960x640'},
-						{id: 'Galaxy Notes', name:'1280x800'},
-						{id: 'iPad 2', name:'1024x768'},
-						{id: 'Galaxy Tab 10,1', name:'1280x800'},
-						{id: 'Playbook', name:'1024x600'},
-						{id: 'Galaxy Tab 8,9', name:'1280x800'},
-						{id: 'iPad 3', name:'2048x1536'},
-						{id: 'Macbook Air', name:'1440x900'},
-						{id: 'iMac', name:'2560x1440'},
-						{id: 'Macbook pro Retina', name:'2880x1800'}
+						{id: 'iPhone 3GS (420x480)', name:'420x480'},
+						{id: 'Nokia N900 (800x480)', name:'800x480'},
+						{id: 'iPhone 4s (960x640)', name:'960x640'},
+						{id: 'Galaxy Notes (1280x800)', name:'1280x800'},
+						{id: 'iPad 2 (1024x768)', name:'1024x768'},
+						{id: 'Galaxy Tab 10,1 (1280x800)', name:'1280x800'},
+						{id: 'Playbook (1024x600)', name:'1024x600'},
+						{id: 'Galaxy Tab 8,9 (1280x800)', name:'1280x800'},
+						{id: 'iPad 3 (2048x1536)', name:'2048x1536'},
+						{id: 'Macbook Air (1440x900)', name:'1440x900'},
+						{id: 'iMac (2560x1440)', name:'2560x1440'},
+						{id: 'Macbook pro Retina (2880x1800)', name:'2880x1800'}
 					  ];
 
 					scope.clips = [						
