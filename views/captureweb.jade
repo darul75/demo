@@ -10,9 +10,16 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
   script(type='text/javascript', src='https://code.jquery.com/jquery-latest.js')
   script(type='text/javascript', src='/bower_components/angular/angular.min.js')  
   script(type='text/javascript', src='/javascripts/ng-captureweb.js')
-  script(type='text/javascript', src='/javascripts/ng-prettyjson.js')  
+  script(type='text/javascript', src='/javascripts/ng-prettyjson.js')
+  script(type='text/javascript', src='/javascripts/canvas_all.js') 
+  script(type='text/javascript', src='/javascripts/canvas.js')
   script(type="text/javascript", src="/bower_components/ngprogress/build/ngProgress.min.js")    
   body
+
+    style.
+      #container { position: relative; }
+      #imageView { border: 1px solid #000; }
+      #imageTemp { position: absolute; top: 1px; left: 1px; }    
 
    div.wrapper(ng-app="myApp", ng-controller="ctrl")
     <!-- HEADER -->
@@ -36,7 +43,12 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
         p 1. Capture any page from the web with different resolutions
         p 2. Save it as a pdf or png file  
 
+        //- select(id="dtool")
+        //-   option(value="rect") Rectangle
+        //-   option(value="pencil") Pencil
+
         div(captureweb, url="url")
+
         div
             script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
        script.

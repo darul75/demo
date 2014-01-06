@@ -9,6 +9,19 @@ var dynupdate = require('dynupdate');
 var jcc = require('jade-cache');
 var captureweb = require('captureweb');
 var base64encode = require('base64-stream').Encode;
+var fs = require('fs');
+var xml2js = require('xml2js');
+
+var parser = new xml2js.Parser
+var useragents = '';
+
+// http://techpatterns.com/downloads/firefox/useragentswitcher.xml
+fs.readFile(__dirname + '/useragentswitcher.xml', function(err, data) {
+    parser.parseString(data, function (err, result) {
+        useragents = result;
+        console.log('useragents loaded');
+    });
+});
 
 var init = false; 
 
@@ -117,6 +130,10 @@ app.get('/querysatelize', function(req, res){
 	satelize.satelize({ip:ip}, function(err, geoData) {
       res.end(geoData);
     });
+});
+
+app.get('/useragents', function(req, res){   
+  res.json(useragents);
 });
 
 app.post('/querystarter', function(req, res){ 

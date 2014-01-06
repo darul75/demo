@@ -15,7 +15,7 @@
   ],
   "dependencies": {
       "base64-stream": "0.1.2",
-      "captureweb": "0.0.5",
+      "captureweb": "0.0.6",
       "dynupdate": "0.0.3",
       "express": "3.4.4",
       "jade": "0.35.0",

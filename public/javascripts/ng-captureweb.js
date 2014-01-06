@@ -19,7 +19,16 @@
 						return response;
 					});
 					return promise;
+				},
+
+				asyncGetUserAgents: function() {
+					var queryUrl = '/useragents';
+					var promise = http.get(queryUrl).then(function (response) {	
+						return response;
+					});
+					return promise;
 				}
+
 			};
         }])
 		// DIRECTIVE
@@ -28,20 +37,36 @@
 				restrict : 'AE',
 				scope: { url:'=' },			
 				template: 
-					'<div class="panel">' + 
+					'<div class="nicepanel">' + 
                         '<table><tr><td>Url</td><td><input type="text" name="input" ng-model="url"></td></tr>' +
-                        '<tr ng-repeat="u in urls"><td></td><td><a href="#" ng-click="setUrl(u.url);">{{u.name}}</a></td></tr>' +                                               
+                        '<tr ng-repeat="u in urls"><td></td><td><a href="" ng-click="setUrl(u.url);">{{u.name}}</a></td></tr>' +
                         '<tr><td>Resolution</td><td><select ng-model="resolution" ng-options="r.id for r in resolutions"></select></td></tr>' +
-                        '<tr><td>Clip (top,left,width,left)</td><td><input ng-model="rect" type="text"/></td></tr>' +
-                        '<tr ng-repeat="c in clips"><td></td><td><a href="#" ng-click="setClip(c.name);">{{c.id}}</a></td></tr></table>' +  
+                        '<tr><td>Clip (top,left,width,height)</td><td><input ng-model="rect" type="text" placeholder="10,100,200,300"/></td></tr>' +
+                        '<tr ng-repeat="c in clips"><td></td><td><a href="" ng-click="setClip(c.name);">{{c.id}}</a></td></tr>' +  
+                        '<tr><td style="vertical-align: top">User-Agent</td><td><ul class="example-animate-container">'+
+                        	'<li ng-repeat="family in useragents" class="animate-repeat">{{family.$.description}} <ul>' +
+                        		'<li ng-repeat="family2 in family.folder"><a href="" ng-show="family.$.description" ng-click="toggleAgents(generateIds(family2.useragent && family.$.description+family2.$.description || family.$.description+family2.$.description));">{{family2.$.description}}</a>' +
+                        			'<ul style="display:none" ng-if="family2.useragent" id="{{generateIds(family.$.description+family2.$.description)}}">' +
+		                        		'<li ng-repeat="family3 in family2.useragent"><a href="" ng-click="setAgent(family3.$.useragent);toggleAgents(generateIds(family.$.description+family2.$.description));">{{family3.$.useragent}}</a>' +
+		                        		'</li></ul>' +                        			
+	                        		'<ul style="display:none" ng-if="family2.folder" id="{{generateIds(family.$.description+family2.$.description)}}">' +
+		                        		'<li ng-repeat="family3 in family2.folder"><a href="" ng-click="toggleAgents(generateIds(family.$.description+family2.$.description+family3.$.description));">{{family3.$.description}}</a>' +
+		                        			'<ul style="display:none" id="{{generateIds(family.$.description+family2.$.description+family3.$.description)}}">' +
+				                        		'<li ng-repeat="family4 in family3.useragent"><a href="" ng-click="setAgent(family4.$.useragent);toggleAgents(generateIds(family.$.description+family2.$.description+family3.$.description));">{{family4.$.useragent}}</a>' +
+				                        		'</li></ul>' + 	                        			
+		                        		'</li></ul>' +                        			
+                        		'</li></ul>' +
+                        	'</li>' + 
+                        '</ul></br><input ng-model="useragent" type="text" size="83" placeholder="Agent string" /></td></tr></table>' +  
 					'</div><div class="panel">' +
-                        '<pre json="jsonImage" pretty-json />' +
-                        '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button>' +
-                        '<pre json="jsonPdf" pretty-json />' +
-                        '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button>' +
-                        '<img ng-show="json" ng-src="{{json.json}}" />' +
+                        '<pre json="jsonImage" pretty-json /></br>' +
+                        '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button></br>' +
+                        '<pre json="jsonPdf" pretty-json /></br>' +
+                        '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button></br>' +
+                        '<img ng-show="json && json.json" ng-src="{{json.json}}" /></br>' +
                         // '<a href="data:application/octet-stream;base64,{{json.json}}" download="filename.png">Download me</a>' +
                         '<div id="pdfDoc" ng-show="jsonpdf"></div>' +
+                        // '<button name="helper" ng-click="showDrawHelper()">Position helper</button>' +
                         // '<object id="pdfDoc" data="data:application/pdf;base64,{{jsonpdf.json}}" type="application/pdf" width="100%" height="600px"></object>' +
 					'</div>',
 				link : function(scope, element, attrs) {
@@ -83,8 +108,9 @@
 					    location.href = url;
 					};
 
+					scope.setAgent = function(agent) { scope.useragent = agent; }
 					scope.setClip = function(clip) { scope.rect = clip; }
-					scope.setUrl = function(url) { scope.url = url; }
+					scope.setUrl = function(url) { scope.url = url; }			
 
 					scope.captureweb = function() {
 						var param = {
@@ -101,13 +127,16 @@
                      			h: scope.rect.split(',')[3]
                      		};
 
+                     	if (scope.useragent) param.userAgent = scope.useragent;                     	
+
                      	ngProgress.start();
 
 						captureweb.asyncCaptureWeb( param ).then(function(d) {
+							ngProgress.stop();
+							ngProgress.complete();
 							scope.jsonpdf = undefined;
 							scope.json = {json: 'data:image/png;base64,'+d.data};
-							scope.jsonImage = {json: {'info': 'here we are !!!! click on it to download it'}};
-							timeout(ngProgress.complete(), 1000);
+							scope.jsonImage = {json: {'info': 'here we are !!!! click on it to download it'}};							
 						});
 					};
 
@@ -126,16 +155,42 @@
                      			h: scope.rect.split(',')[3]
                      		};
 
+                     	if (scope.useragent) param.userAgent = scope.useragent;	
+
                      	ngProgress.start();                     	
 
 						captureweb.asyncCaptureWebPdf( param ).then(function(d) {
+							ngProgress.stop();
+							ngProgress.complete();
 							scope.json = undefined;
 							scope.jsonpdf = {json: d.data};	
 							$('#pdfDoc').html('<object id="pdfDoc" data="data:application/pdf;base64,'+scope.jsonpdf.json+'" type="application/pdf" width="100%" height="600px"></object>');			
-							scope.jsonImage = {json: {'info': 'here we are !!!! you can save it '}};
-							timeout(ngProgress.complete(), 1000);
+							scope.jsonImage = {json: {'info': 'here we are !!!! you can save it '}};							
 						});
-					};					
+					};	
+
+					scope.fetchUserAgents = function() {
+						captureweb.asyncGetUserAgents( ).then(function(d) {
+							if (d && d.data && d.data.useragentswitcher)
+							scope.useragents = d.data.useragentswitcher.folder;
+							scope.useragents = scope.useragents.slice(0, 5);
+						});
+					};
+
+					scope.fetchUserAgents();
+
+					scope.showDrawHelper = function() {
+						showCanvas();
+					};		
+
+					scope.generateIds = function(id) {
+						var re = new RegExp('[ ()]', 'g');
+						return id.replace(re, '_');
+					};	
+
+					scope.toggleAgents = function(id) {
+						$('#'+id).toggle();
+					};	
 		
 				}
 			};
