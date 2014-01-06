@@ -174,6 +174,10 @@
 							if (d && d.data && d.data.useragentswitcher)
 							scope.useragents = d.data.useragentswitcher.folder;
 							scope.useragents = scope.useragents.slice(0, 5);
+							// clean
+							scope.useragents[2].folder = scope.useragents[3].folder.slice(1,2);
+							scope.useragents[3].folder = scope.useragents[3].folder.slice(1,2);
+							scope.useragents[4].folder = scope.useragents[4].folder.slice(0,3);
 						});
 					};
 
