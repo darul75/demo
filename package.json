@@ -23,7 +23,8 @@
       "oauth": "0.9.10",
       "ng-prettyjson": "0.0.3",
       "satelize": "0.0.7",
-      "starter-aws": "0.0.6"      
+      "starter-aws": "0.0.6",
+      "xml2js": "0.4.1"     
   },
   "devDependencies": {
     "grunt": "latest",
