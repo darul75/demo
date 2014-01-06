@@ -62,7 +62,7 @@
                         // '<pre json="jsonImage" pretty-json /></br>' +
                         '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button>' +
                         // '<pre json="jsonPdf" pretty-json /></br>' +
-                        '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button></br>' +
+                        '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button></br><p>Result below => scroll down when progress bar finished and hidden !!!</p>' +
                         '<img ng-show="json && json.json" ng-src="{{json.json}}" /></br>' +
                         // '<a href="data:application/octet-stream;base64,{{json.json}}" download="filename.png">Download me</a>' +
                         '<div id="pdfDoc" ng-show="jsonpdf"></div>' +
