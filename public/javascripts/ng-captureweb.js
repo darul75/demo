@@ -59,9 +59,9 @@
                         	'</li>' + 
                         '</ul></br><input ng-model="useragent" type="text" size="83" placeholder="Agent string" /></td></tr></table>' +  
 					'</div><div class="panel">' +
-                        '<pre json="jsonImage" pretty-json /></br>' +
-                        '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button></br>' +
-                        '<pre json="jsonPdf" pretty-json /></br>' +
+                        // '<pre json="jsonImage" pretty-json /></br>' +
+                        '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button>' +
+                        // '<pre json="jsonPdf" pretty-json /></br>' +
                         '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button></br>' +
                         '<img ng-show="json && json.json" ng-src="{{json.json}}" /></br>' +
                         // '<a href="data:application/octet-stream;base64,{{json.json}}" download="filename.png">Download me</a>' +
