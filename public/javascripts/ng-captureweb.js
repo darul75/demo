@@ -108,7 +108,7 @@
                     var img = document.images[0];
 					img.onclick = function() {
 					    var url = img.src.replace(/^data:image\/png/, 'data:application/octet-stream');					    
-					    location.href = url;
+					    window.location.href = url;
 					};
 
 					scope.setAgent = function(agent) { scope.useragent = agent; }
