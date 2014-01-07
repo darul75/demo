@@ -103,7 +103,7 @@
 						{url: 'http://rue89.nouvelobs.com/', name: 'rue89.nouvelobs.com'}
 					];            
 
-					scope.resolution = scope.resolutions[11];  
+					scope.resolution = scope.resolutions[4];  
 
                     var img = document.images[0];
 					img.onclick = function() {
