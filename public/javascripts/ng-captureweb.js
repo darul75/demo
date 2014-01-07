@@ -140,7 +140,7 @@
 							scope.jsonpdf = undefined;
 							scope.json = {json: 'data:image/png;base64,'+d.data};
 							scope.jsonImage = {json: {'info': 'here we are !!!! click on it to download it'}};							
-							scope.gotoResult();
+							timeout(scope.gotoResult, 1000);							
 						});
 					};
 
@@ -170,7 +170,7 @@
 							scope.jsonpdf = {json: d.data};	
 							$('#pdfDoc').html('<object id="pdfDoc" data="data:application/pdf;base64,'+scope.jsonpdf.json+'" type="application/pdf" width="100%" height="600px"></object>');			
 							scope.jsonImage = {json: {'info': 'here we are !!!! you can save it '}};
-							scope.gotoResult();							
+							timeout(scope.gotoResult, 1000);							
 						});
 					};	
 
