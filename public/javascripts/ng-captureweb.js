@@ -32,7 +32,7 @@
 			};
         }])
 		// DIRECTIVE
-		.directive('captureweb', ['captureweb', 'ngProgress', '$timeout', function(captureweb, ngProgress, timeout) {
+		.directive('captureweb', ['captureweb', 'ngProgress', '$timeout', '$location', '$anchorScroll',function(captureweb, ngProgress, timeout, location, anchorScroll) {
 			return {
 				restrict : 'AE',
 				scope: { url:'=' },			
@@ -43,7 +43,7 @@
                         '<tr><td>Resolution</td><td><select ng-model="resolution" ng-options="r.id for r in resolutions"></select></td></tr>' +
                         '<tr><td>Clip (top,left,width,height)</td><td><input ng-model="rect" type="text" placeholder="10,100,200,300"/></td></tr>' +
                         '<tr ng-repeat="c in clips"><td></td><td><a href="" ng-click="setClip(c.name);">{{c.id}}</a></td></tr>' +  
-                        '<tr><td style="vertical-align: top">User-Agent</td><td><ul class="example-animate-container">'+
+                        '<tr><td style="vertical-align: top">User-Agent</td><td><a href="" ng-click="toggleAgentPanel();">choose</a><ul class="example-animate-container" id="agentPanel" style="display:none">'+
                         	'<li ng-repeat="family in useragents" class="animate-repeat">{{family.$.description}} <ul>' +
                         		'<li ng-repeat="family2 in family.folder"><a href="" ng-show="family.$.description" ng-click="toggleAgents(generateIds(family2.useragent && family.$.description+family2.$.description || family.$.description+family2.$.description));">{{family2.$.description}}</a>' +
                         			'<ul style="display:none" ng-if="family2.useragent" id="{{generateIds(family.$.description+family2.$.description)}}">' +
@@ -57,15 +57,18 @@
 		                        		'</li></ul>' +                        			
                         		'</li></ul>' +
                         	'</li>' + 
-                        '</ul></br><input ng-model="useragent" type="text" size="83" placeholder="Agent string" /></td></tr></table>' +  
+                        	'<li><input ng-model="useragent" type="text" size="83" placeholder="Agent string" /></li>' +
+                        '</ul></td></tr></table>' +  
 					'</div><div class="panel">' +
                         // '<pre json="jsonImage" pretty-json /></br>' +
                         '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button>' +
                         // '<pre json="jsonPdf" pretty-json /></br>' +
-                        '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button></br><p>Result below => scroll down when progress bar finished and hidden !!!</p>' +
-                        '<img ng-show="json && json.json" ng-src="{{json.json}}" /></br>' +
-                        // '<a href="data:application/octet-stream;base64,{{json.json}}" download="filename.png">Download me</a>' +
-                        '<div id="pdfDoc" ng-show="jsonpdf"></div>' +
+                        '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button></br>' +
+                        '<div id="result">' +
+	                        '<img ng-show="json && json.json" ng-src="{{json.json}}" /></br>' +
+	                        // '<a href="data:application/octet-stream;base64,{{json.json}}" download="filename.png">Download me</a>' +
+	                        '<div id="pdfDoc" ng-show="jsonpdf"></div>' +
+	                    '</div>' +  
                         // '<button name="helper" ng-click="showDrawHelper()">Position helper</button>' +
                         // '<object id="pdfDoc" data="data:application/pdf;base64,{{jsonpdf.json}}" type="application/pdf" width="100%" height="600px"></object>' +
 					'</div>',
@@ -94,13 +97,13 @@
 					];  
 
 					scope.urls = [					
-						{url: 'http://www.vice.com/', name: 'www.vice.com/'},
+						{url: 'http://www.vice.com/', name: 'www.vice.com'},
 						{url: 'http://www.nationalgeographic.fr/', name: 'www.nationalgeographic.fr'},
 						{url: 'https://maps.google.com/maps/ms?f=q&hl=fr&geocode=&ie=UTF8&msa=0&msid=101908501337757093341.000443bee508411eb6e9a&ll=48.874383,2.372553&spn=0.008581,0.020084&iwloc=00044e3190ebe22c0b86c&source=embed', name: 'gmap example'},
 						{url: 'http://rue89.nouvelobs.com/', name: 'rue89.nouvelobs.com'}
 					];            
 
-					scope.resolution = scope.resolutions[0];  
+					scope.resolution = scope.resolutions[11];  
 
                     var img = document.images[0];
 					img.onclick = function() {
@@ -137,6 +140,7 @@
 							scope.jsonpdf = undefined;
 							scope.json = {json: 'data:image/png;base64,'+d.data};
 							scope.jsonImage = {json: {'info': 'here we are !!!! click on it to download it'}};							
+							scope.gotoResult();
 						});
 					};
 
@@ -165,7 +169,8 @@
 							scope.json = undefined;
 							scope.jsonpdf = {json: d.data};	
 							$('#pdfDoc').html('<object id="pdfDoc" data="data:application/pdf;base64,'+scope.jsonpdf.json+'" type="application/pdf" width="100%" height="600px"></object>');			
-							scope.jsonImage = {json: {'info': 'here we are !!!! you can save it '}};							
+							scope.jsonImage = {json: {'info': 'here we are !!!! you can save it '}};
+							scope.gotoResult();							
 						});
 					};	
 
@@ -192,9 +197,17 @@
 						return id.replace(re, '_');
 					};	
 
-					scope.toggleAgents = function(id) {
-						$('#'+id).toggle();
-					};	
+					scope.toggleAgents = function(id) { $('#'+id).toggle(); };	
+					scope.toggleAgentPanel = function(id) { $('#agentPanel').toggle();};
+
+					scope.gotoResult = function (){
+					    // set the location.hash to the id of
+					    // the element you wish to scroll to.
+					    location.hash('result');
+					    
+					    // call $anchorScroll()
+					    anchorScroll();
+					 };
 		
 				}
 			};
