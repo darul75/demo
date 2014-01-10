@@ -11,6 +11,7 @@ var captureweb = require('captureweb');
 var base64encode = require('base64-stream').Encode;
 var fs = require('fs');
 var xml2js = require('xml2js');
+var agent007 = require('agent007');
 
 var parser = new xml2js.Parser
 var useragents = '';
@@ -77,6 +78,10 @@ app.get('/starter', function(req, res){
     res.render('starter');
 });
 
+app.get('/useragent', function(req, res){ 
+    res.render('useragent');
+});
+
 app.get('/dynupdate', function(req, res){ 
     res.render('dynupdate');
 });
@@ -122,6 +127,16 @@ app.get('/search', function(req, res){
         var json = JSON.stringify(data);
         res.end(json);
     });
+});
+
+app.get('/useragentquery', function(req, res){ 
+	var agent = req.query.agent;
+	console.log('agent '+agent);
+	res.end(JSON.stringify(agent007.findAgentsByType(agent)));
+});
+
+app.get('/useragenttypequery', function(req, res){
+	res.end(JSON.stringify(agent007.getTypes()));
 });
 
 app.get('/querysatelize', function(req, res){ 
