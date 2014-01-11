@@ -86,8 +86,18 @@ app.get('/dynupdate', function(req, res){
     res.render('dynupdate');
 });
 
+var lastUrls = [];
+
 app.post('/capturewebquery', function(req, res){ 
   var params = req.body;
+  
+    if (lastUrls.indexOf(params.url) < 0) {
+        if (lastUrls.length == 10)
+            lastUrls.pop();
+        lastUrls.unshift(params.url);        
+    }
+        
+    app.set("lastUrls", lastUrls);
 
     captureweb.capture(params, function(err, stream) {
          if (err) {          
@@ -101,6 +111,15 @@ app.post('/capturewebquery', function(req, res){
 
         stream.pipe(base64encode()).pipe(res);
     });
+});
+
+app.get('/capturewebquerylasturls', function(req, res){ 
+	var top10 = app.get("lastUrls");
+    
+    res.writeHead(200, {"Content-Type": "application/json"});
+    var json = JSON.stringify(top10);
+    res.end(json);
+    
 });
 
 app.post('/capturewebquerypdf', function(req, res){ 
