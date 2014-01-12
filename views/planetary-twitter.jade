@@ -1,0 +1,117 @@
+!!!
+doctype 5
+html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:fb='http://ogp.me/ns/fb#')
+ head
+  link(rel='stylesheet',href='/stylesheets/ng-twitter.css')
+  link(rel='stylesheet',href='/stylesheets/ng-prettyjson.css')
+  //- link(rel='stylesheet',href='/stylesheets/prism.css')
+  link(rel='stylesheet',href='/stylesheets/stylesheet.css')  
+  script(type='text/javascript', src='https://code.jquery.com/jquery-latest.js')
+  script(type='text/javascript', src='http://d3js.org/d3.v3.min.js')
+  script(type='text/javascript', src='http://d3js.org/topojson.v1.min.js')
+  script(type="text/javascript", src="javascripts/planetaryjs.min.js")
+  script(type="text/javascript", src="javascripts/planetaryjs-twitter.min.js")     
+  title See tweet pings on earth globe   
+  body
+
+    style.
+      #container { position: relative; }
+      #imageView { border: 1px solid #000; }
+      #imageTemp { position: absolute; top: 1px; left: 1px; }    
+
+    div.wrapper
+      <!-- HEADER -->
+      div.outer(id="header_wrap")
+        header
+          h1(id="project_title") Planetary Twitter
+          p Some twitter projection  
+          p ( work in progress ) 
+        <!-- MAIN CONTENT -->
+      div.outer(id="main_content_wrap")
+        section.inner(id="main_content")
+          h3
+            a(name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages")
+              span.octicon.octicon-link
+          canvas(id='rotatingGlobe' width='1000' height='1000')        
+            
+          script.
+            (function() {
+              var globe = planetaryjs.planet();      
+
+              globe.loadPlugin(planetaryjs.plugins.earth({
+                topojson: { file:   'world-110m.json' },
+                oceans:   { fill:   '#C59824' },
+                land:     { fill:   '#4D2525' },
+                borders:  { stroke: '#eeeeee' , lineWidth: 0.3}
+              }));
+              
+              globe.loadPlugin(stats(5));
+              globe.loadPlugin(autorotate(1));    
+              globe.loadPlugin(planetaryjs.plugins.drag());      
+              globe.projection.scale(500).translate([500, 500]).rotate([0, -10, 0]);      
+              
+              var colors = ['red', 'yellow', 'white', 'orange', 'green', 'cyan', 'pink'];      
+              var canvas = document.getElementById('rotatingGlobe');      
+              if (window.devicePixelRatio == 2) {
+                canvas.width = 1200;
+                canvas.height = 1200;
+                context = canvas.getContext('2d');
+                context.scale(2, 2);
+              }
+              // Draw that globe!
+              globe.draw(canvas);      
+
+              // This plugin will automatically rotate the globe around its vertical
+              // axis a configured number of degrees every second.
+              function autorotate(degPerSec) {
+                // Planetary.js plugins are functions that take a `planet` instance
+                // as an argument...
+                return function(planet) {
+                  var lastTick = null;
+                  var paused = false;
+                  planet.plugins.autorotate = {
+                    pause:  function() { paused = true;  },
+                    resume: function() { paused = false; }
+                  };
+                  // ...and configure hooks into certain pieces of its lifecycle.
+                  planet.onDraw(function() {
+                    if (paused || !lastTick) {
+                      lastTick = new Date();
+                    } else {
+                      var now = new Date();
+                      var delta = now - lastTick;
+                      // This plugin uses the built-in projection (provided by D3)
+                      // to rotate the globe each time we draw it.
+                      var rotation = planet.projection.rotate();
+                      rotation[0] += degPerSec * delta / 1000;
+                      if (rotation[0] >= 180) rotation[0] -= 360;
+                      planet.projection.rotate(rotation);
+                      lastTick = now;
+                    }
+                  });
+                };
+              };      
+            })();  
+
+          div
+            script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")          
+
+      <!-- FOOTER  -->
+      div(id="footer_wrap" class="outer")
+        footer.inner
+          p(class="copyright") maintained by 
+            a(href="https://github.com/darul75") darul75
+          p Published with 
+            a(href="http://pages.github.com") GitHub Pages — Theme by 
+            a(href="https://github.com/orderedlist") orderedlist
+
+  script.
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-45895157-2', 'darul-demo.herokuapp.com');
+    ga('send', 'pageview');
+   
+
