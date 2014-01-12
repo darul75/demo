@@ -27,6 +27,14 @@
 						return response;
 					});
 					return promise;
+				},
+				
+				asyncGetLastUrls: function() {
+					var queryUrl = '/capturewebquerylasturls';
+					var promise = http.get(queryUrl).then(function (response) {	
+						return response;
+					});
+					return promise;
 				}
 
 			};
@@ -61,17 +69,20 @@
                         '</ul></td></tr></table>' +  
 					'</div><div class="panel">' +
                         // '<pre json="jsonImage" pretty-json /></br>' +
-                        '<button name="capture" ng-click="captureweb()">Capture as IMAGE</button>' +
+                        '<button name="capture" ng-click="captureweb()">CAPTURE IMAGE</button>' +
                         // '<pre json="jsonPdf" pretty-json /></br>' +
-                        '<button name="capture" ng-click="capturewebpdf()">Capture as PDF</button></br>' +
+                        '<button name="capture" ng-click="capturewebpdf()">CAPTURE PDF</button></br>' +
                         '<div id="result">' +
 	                        '<img ng-show="json && json.json" ng-src="{{json.json}}" /></br>' +
 	                        // '<a href="data:application/octet-stream;base64,{{json.json}}" download="filename.png">Download me</a>' +
 	                        '<div id="pdfDoc" ng-show="jsonpdf"></div>' +
-	                    '</div>' +  
+	                    '</div>' +
                         // '<button name="helper" ng-click="showDrawHelper()">Position helper</button>' +
                         // '<object id="pdfDoc" data="data:application/pdf;base64,{{jsonpdf.json}}" type="application/pdf" width="100%" height="600px"></object>' +
-					'</div>',
+					'</div>'+
+					'<div id="nicepanel">' +
+					    '<p>LAST 10 CAPTURED URLS</p><p ng-repeat="u in lastUrls"><a href="" ng-click="setUrl(u);">{{u}}</a></p>' +
+	                '</div>',
 				link : function(scope, element, attrs) {
                     scope.jsonImage = {json: {'info': 'below will your image displayed => click Capture as IMAGE button first'}};
                     scope.jsonPdf = {json: {'info': 'below will your pdf displayed => click Capture as PDF button first'}};                   
@@ -103,7 +114,8 @@
 						{url: 'http://rue89.nouvelobs.com/', name: 'rue89.nouvelobs.com'}
 					];            
 
-					scope.resolution = scope.resolutions[4];  
+					scope.resolution = scope.resolutions[4]; 
+					scope.lastUrls = [];
 
                     var img = document.images[0];
 					img.onclick = function() {
@@ -185,7 +197,15 @@
 							scope.useragents[4].folder = scope.useragents[4].folder.slice(0,3);
 						});
 					};
+					
+					scope.lastUrls = function() {
+					
+						captureweb.asyncGetLastUrls().then(function(d) {
+							scope.lastUrls = d.data;
+						});
+					};
 
+					scope.lastUrls();
 					scope.fetchUserAgents();
 
 					scope.showDrawHelper = function() {

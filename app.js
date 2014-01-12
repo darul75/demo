@@ -94,6 +94,8 @@ var job = new cronJob({
 });
 job.start();
 
+var agent007 = require('agent007');
+
 var parser = new xml2js.Parser
 var useragents = '';
 
@@ -159,6 +161,10 @@ app.get('/starter', function(req, res){
     res.render('starter');
 });
 
+app.get('/useragent', function(req, res){ 
+    res.render('useragent');
+});
+
 app.get('/dynupdate', function(req, res){ 
     res.render('dynupdate');
 });
@@ -171,8 +177,18 @@ app.get('/twitter', function(req, res) {
   res.end(app.get("tweetJSON"));
 });
 
+var lastUrls = [];
+
 app.post('/capturewebquery', function(req, res){ 
   var params = req.body;
+  
+    if (lastUrls.indexOf(params.url) < 0) {
+        if (lastUrls.length == 10)
+            lastUrls.pop();
+        lastUrls.unshift(params.url);        
+    }
+        
+    app.set("lastUrls", lastUrls);
 
     captureweb.capture(params, function(err, stream) {
          if (err) {          
@@ -186,6 +202,15 @@ app.post('/capturewebquery', function(req, res){
 
         stream.pipe(base64encode()).pipe(res);
     });
+});
+
+app.get('/capturewebquerylasturls', function(req, res){ 
+	var top10 = app.get("lastUrls");
+    
+    res.writeHead(200, {"Content-Type": "application/json"});
+    var json = JSON.stringify(top10);
+    res.end(json);
+    
 });
 
 app.post('/capturewebquerypdf', function(req, res){ 
@@ -212,6 +237,16 @@ app.get('/search', function(req, res){
         var json = JSON.stringify(data);
         res.end(json);
     });
+});
+
+app.get('/useragentquery', function(req, res){ 
+	var agent = req.query.agent;
+	console.log('agent '+agent);
+	res.end(JSON.stringify(agent007.findAgentsByType(agent)));
+});
+
+app.get('/useragenttypequery', function(req, res){
+	res.end(JSON.stringify(agent007.getTypes()));
 });
 
 app.get('/querysatelize', function(req, res){ 
