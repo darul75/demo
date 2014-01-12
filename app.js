@@ -174,6 +174,10 @@ app.get('/planetary-twitter', function(req, res){
     res.render('planetary-twitter');
 });
 
+app.get('/globe-twitter', function(req, res){ 
+    res.render('planetary-twitter');
+});
+
 app.get('/twitter', function(req, res) {
   res.end(app.get("tweetJSON"));
 });
