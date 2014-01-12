@@ -15,6 +15,7 @@ var xml2js = require('xml2js');
 var topojson = require('topojson');
 var twitter2 = require('ntwitter');
 var cronJob = require('cron').CronJob;
+var agent007 = require('agent007');
 
 var eventEmitter = new events.EventEmitter();
 
@@ -94,7 +95,7 @@ var job = new cronJob({
 });
 job.start();
 
-var agent007 = require('agent007');
+
 
 var parser = new xml2js.Parser
 var useragents = '';
