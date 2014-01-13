@@ -84,7 +84,6 @@ twit.stream('statuses/filter', {'track':'football'}, function(stream) {
 eventEmitter.on('newTweet', newTweet);
 
 // SMALL CRON
-var cronJob = require('cron').CronJob;
 var job = new cronJob({
   cronTime: '00 00 00 * * 1-7',
   onTick: function() {
@@ -94,8 +93,6 @@ var job = new cronJob({
   timeZone: "America/Los_Angeles"
 });
 job.start();
-
-
 
 var parser = new xml2js.Parser
 var useragents = '';
