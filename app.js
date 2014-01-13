@@ -49,6 +49,7 @@ var newTweet = function newTweet(tweet)
       }
   };
 
+
   featuresTweets.push(o);
 
   if (featuresTweets.length % 10 === 0) {      
@@ -74,7 +75,7 @@ var newTweet = function newTweet(tweet)
     }
 }
 
-twit.stream('statuses/filter', {'track':'football'}, function(stream) {
+twit.stream('statuses/filter', {'track':'football,futebol,футбол,サッカー,fútbol'}, function(stream) {
   stream.on('data', function (data) {
     if (data.geo)
       eventEmitter.emit('newTweet', data);
