@@ -87,6 +87,7 @@ eventEmitter.on('newTweet', newTweet);
 var job = new cronJob({
   cronTime: '00 00 00 * * 1-7',
   onTick: function() {
+    featuresTweets = [];
     app.set("tweetJSON", JSON.stringify({result:'nok'}));
   },
   start: false,
