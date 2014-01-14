@@ -181,11 +181,12 @@ app.get('/twitter', function(req, res) {
   res.end(app.get("tweetJSON"));
 });
 
-var lastUrls = [];
+app.set("lastUrls", []);
 
 app.post('/capturewebquery', function(req, res){ 
   var params = req.body;
   
+    var lastUrls = app.get('lastUrls');
     if (lastUrls.indexOf(params.url) < 0) {
         if (lastUrls.length == 10)
             lastUrls.pop();
@@ -209,10 +210,9 @@ app.post('/capturewebquery', function(req, res){
 });
 
 app.get('/capturewebquerylasturls', function(req, res){ 
-	var top10 = app.get("lastUrls");
     
     res.writeHead(200, {"Content-Type": "application/json"});
-    var json = JSON.stringify(top10);
+    var json = JSON.stringify(app.get('lastUrls'));
     res.end(json);
     
 });
