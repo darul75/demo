@@ -52,7 +52,10 @@ var newTweet = function newTweet(tweet)
 
   featuresTweets.push(o);
 
-  if (featuresTweets.length % 10 === 0) {      
+  if (featuresTweets.length % 10 === 0) {  
+
+      console.log(featuresTweets.length);
+
       outputFile = __dirname+'/public/tweets.json';
       var newArray = JSON.parse(JSON.stringify(featuresTweets));
       var collection = {type: "FeatureCollection", features: featuresTweets};
@@ -75,7 +78,7 @@ var newTweet = function newTweet(tweet)
     }
 }
 
-twit.stream('statuses/filter', {'track':'football,futebol,футбол,サッカー,fútbol'}, function(stream) {
+twit.stream('statuses/filter', {'track':'football,futebol,fútbol,Fußball,футбол,サッカー'}, function(stream) {
   stream.on('data', function (data) {
     if (data.geo)
       eventEmitter.emit('newTweet', data);
