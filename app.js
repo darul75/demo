@@ -49,6 +49,10 @@ var newTweet = function newTweet(tweet)
       }
   };
 
+  if (featuresTweets.length === 100000000) {
+    featuresTweets = [];
+    app.set("tweetJSON", JSON.stringify({result:'nok'}));
+  }
 
   featuresTweets.push(o);
 
@@ -97,7 +101,7 @@ var job = new cronJob({
   start: false,
   timeZone: "America/Los_Angeles"
 });
-job.start();
+//job.start();
 
 var parser = new xml2js.Parser
 var useragents = '';
