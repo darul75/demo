@@ -31,7 +31,8 @@ var twit = new twitter2({
   access_token_secret: access_token_secret
 });
 
-var featuresTweets = [];
+var tweets = [];
+var outputFile = __dirname+'/tweets.json';
 
 var newTweet = function newTweet(tweet)
 {  
@@ -49,37 +50,46 @@ var newTweet = function newTweet(tweet)
       }
   };
 
-  if (featuresTweets.length === 100000000) {
-    featuresTweets = [];
+  if (tweets.length === 100000000) {
+    tweets = [];
     app.set("tweetJSON", JSON.stringify({result:'nok'}));
   }
 
-  featuresTweets.push(o);
+  tweets.push(o);
 
-  if (featuresTweets.length % 10 === 0) {  
+  if (tweets.length % 1 === 0) {  
 
-      console.log(featuresTweets.length);
+      console.log(tweets.length);
 
-      outputFile = __dirname+'/public/tweets.json';
-      var newArray = JSON.parse(JSON.stringify(featuresTweets));
-      var collection = {type: "FeatureCollection", features: featuresTweets};
-      var topology = topojson.topology({collection: collection}, {"property-transform":function propertyTransform(properties, key, value) {
+      createTopologyTweets();
+      
+      writeTweetsFile();
+
+    }
+}
+
+function createTopologyTweets() {
+    
+    var newArray =  JSON.parse(JSON.stringify(tweets));
+    
+    var collection = {type: "FeatureCollection", features: tweets};
+    var topology = topojson.topology({collection: collection}, {"property-transform":function propertyTransform(properties, key, value) {
           properties[key] = value;
           return true;
         }
-      }); // convert to TopoJSON
+    }); // convert to TopoJSON
+    
+    
+    app.set("tweetJSON", JSON.stringify(topology));
+    
+    tweets = newArray;
+    
+}
 
-      featuresTweets = newArray;
-
-      //console.log(JSON.stringify(featuresTweets));
-
-      // var json = JSON.stringify(collection);
-      app.set("tweetJSON", JSON.stringify(topology));
-      // fs.writeFile(outputFile, JSON.stringify(topology), function (err) {
-      //   //console.log(writed);
-      //   //fs.writeFileSync(outputFile, JSON.stringify(topology));
-      // });
-    }
+function writeTweetsFile() {
+    fs.writeFile(outputFile, JSON.stringify(tweets), function (err) {
+         
+    });
 }
 
 twit.stream('statuses/filter', {'track':'football,futebol,fútbol,Fußball,футбол,サッカー'}, function(stream) {
@@ -147,10 +157,6 @@ starterAws.daemon(function(err, o) {console.log(o)});
 app.get('/', function(req, res){ 
     res.render('test');
 });
-
-/*app.get('/partials/test', function(req, res){ 
-    res.render('partials/test');
-});*/
 
 app.get('/express-cache', function(req, res){ 
     res.render('nopartials/test');
@@ -336,11 +342,18 @@ app.get(function(req, res){
 /*app.listen(8080, function(){*/
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
-  app.set("tweetJSON", JSON.stringify({result:'nok'}));
+    fs.readFile(outputFile, function(err, data) {
+        if (err || !data || data === '')
+            app.set("tweetJSON", JSON.stringify({result:'nok'}));
+        else {
+            tweets = data.toJSON();
+            createTopologyTweets();
+        }
+    });
+  
 	if (!init) {
         twitter.auth(options, function(err, data) {
           init=true;
-        
         });
     }
 });
