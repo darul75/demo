@@ -57,9 +57,9 @@ var newTweet = function newTweet(tweet)
 
   tweets.push(o);
 
-  if (tweets.length % 1 === 0) {  
+  if (tweets.length % 10 === 0) {  
 
-      console.log(tweets.length);
+      //console.log(tweets.length);
 
       createTopologyTweets();
       
