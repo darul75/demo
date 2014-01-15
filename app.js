@@ -349,6 +349,8 @@ app.listen(port, function() {
             tweets = data.toJSON();
             if (tweets && tweets.length > 0)
                 createTopologyTweets();
+            else
+                app.set("tweetJSON", JSON.stringify({result:'nok'}));    
         }
     });
   
