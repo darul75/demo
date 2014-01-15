@@ -57,7 +57,7 @@ var newTweet = function newTweet(tweet)
 
   tweets.push(o);
 
-  if (tweets.length % 1 === 0) {  
+  if (tweets.length % 6 === 0) {  
 
       console.log(tweets.length);
 
