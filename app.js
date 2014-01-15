@@ -57,9 +57,9 @@ var newTweet = function newTweet(tweet)
 
   tweets.push(o);
 
-  if (tweets.length % 10 === 0) {  
+  if (tweets.length % 1 === 0) {  
 
-      //console.log(tweets.length);
+      console.log(tweets.length);
 
       createTopologyTweets();
       
@@ -79,15 +79,13 @@ function createTopologyTweets() {
         }
     }); // convert to TopoJSON
     
-    
-    app.set("tweetJSON", JSON.stringify(topology));
-    
     tweets = newArray;
     
+    app.set("tweetJSON", JSON.stringify(topology));
 }
 
 function writeTweetsFile() {
-    fs.writeFile(outputFile, JSON.stringify(tweets), function (err) {
+    fs.writeFile(outputFile, JSON.stringify(tweets), {encoding:'utf8'},function (err) {
          
     });
 }
@@ -342,17 +340,18 @@ app.get(function(req, res){
 /*app.listen(8080, function(){*/
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
-    fs.readFile(outputFile, function(err, data) {
-        if (err || !data || data === '')
-            app.set("tweetJSON", JSON.stringify({result:'nok'}));
-        else {
-            tweets = data.toJSON();
-            if (tweets && tweets.length > 0)
-                createTopologyTweets();
-            else
-                app.set("tweetJSON", JSON.stringify({result:'nok'}));    
+    var data = fs.readFileSync(outputFile, {encoding : 'utf8'})
+    
+    if (!data || data === '')
+        app.set("tweetJSON", JSON.stringify({result:'nok'}));
+    else {
+        tweets = JSON.parse(data);
+        if (tweets && tweets.length > 0) {
+            createTopologyTweets();
         }
-    });
+        else
+            app.set("tweetJSON", JSON.stringify({result:'nok'}));    
+    }
   
 	if (!init) {
         twitter.auth(options, function(err, data) {
