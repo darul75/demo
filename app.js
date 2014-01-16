@@ -101,15 +101,17 @@ eventEmitter.on('newTweet', newTweet);
 
 // SMALL CRON
 var job = new cronJob({
-  cronTime: '00 00 00 * * 1-7',
+  cronTime: '* */20 * * * 1-7',
   onTick: function() {
-    featuresTweets = [];
-    app.set("tweetJSON", JSON.stringify({result:'nok'}));
+    http.get("http://darul-demo.herokuapp.com/twitter", function(res) {
+        console.log("Got response: " + res.statusCode);
+    }).on('error', function(e) {
+      console.log("Got error: " + e.message);
+    });
   },
-  start: false,
-  timeZone: "America/Los_Angeles"
+  start: false
 });
-//job.start();
+job.start();
 
 var parser = new xml2js.Parser
 var useragents = '';
