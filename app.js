@@ -162,6 +162,10 @@ app.get('/express-cache', function(req, res){
     res.render('nopartials/test');
 });
 
+app.get('/audio', function(req, res){ 
+    res.render('audio');
+});
+
 app.get('/satelize', function(req, res){ 
     res.render('satelize');
 });
