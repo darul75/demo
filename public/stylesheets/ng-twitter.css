@@ -31,6 +31,7 @@ div.panel input {
 }
 
 div.panel button {
+    cursor: pointer; cursor: hand;
     border: 5px solid white; 
     -webkit-box-shadow: 
       inset 0 0 8px  rgba(0,0,0,0.1),
@@ -44,6 +45,11 @@ div.panel button {
     padding: 5px;
     background: #00923E;
     margin: 0 0 10px 0;    
+}
+
+div.panel button.active {    
+    background: #28166F; 
+    color: white;   
 }
 
 ul.tweetFavList{
@@ -155,6 +161,7 @@ ul.tweetFavList li:last-child .divider{
 }
 
 .styled-select select {
+  cursor: pointer; cursor: hand;
    border: 5px solid white; 
     -webkit-box-shadow: 
       inset 0 0 8px  rgba(0,0,0,0.1),

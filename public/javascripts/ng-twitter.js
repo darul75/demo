@@ -3,7 +3,7 @@
 
 	angular.module('ngTwitter', ['ngSanitize'])	
 		// TWEET LINKIFIER
-		.service('linkify', function() {
+		.service('linkify',['$sce', function(sce) {
  
 			function escapeHTML(text) {
 				return angular.element('<div/>').text(text).html();
@@ -57,10 +57,10 @@
 								'<a title="Go to twitter page" class="user" href="http://twitter.com/'+tweet.user.screen_name+'" target="_blank">'+tweet.user.screen_name+'</a>'+ 
 								'<span title="Retweet Count" class="retweet">'+tweet.retweet_count+'</span>' + 
 							'</span>';
-					return result;
+					return sce.trustAsHtml(result);
 				}
 			};
-		})
+		}])
 		// TWEETER SERVICE AUTH AND QUERY
 		.service('twitter', ['$http', function (http) {			
 			return {
@@ -84,11 +84,11 @@
 				template: 
 					'<div class="panel" ng-show="button">' + 						
 						'<div><button name="START" ng-click="startTimeout()" ng-show="stop">FETCH NEW TWEETS</button>' + 
-						'<button name="STOP" ng-click="stopTimeout()" ng-show="!stop">STOP FETCHING TWEETS</button></div>' +
+						'<button name="STOP" ng-click="stopTimeout()" ng-show="!stop" class="active">STOP FETCHING TWEETS</button></div>' +
 						'<div><button name="ONLYIMAGES" ng-click="onlyImages()" ng-show="!onlyimages">PICS ONLY</button>' +
-						'<button name="EVERYTHING" ng-click="onlyImages()" ng-show="onlyimages">EVERYTHING</button></div>' +
+						'<button name="EVERYTHING" ng-click="onlyImages()" ng-show="onlyimages" class="active">EVERYTHING</button></div>' +
 						'<div><button name="SCROLL" ng-click="scroll()" ng-show="!scrollInterval">SCROLL AUTO</button>' +
-						'<button name="STOPSCROLL" ng-click="scroll()" ng-show="scrollInterval">STOP SCROLLING AUTO</button></div>' +						
+						'<button name="STOPSCROLL" ng-click="scroll()" ng-show="scrollInterval" class="active">STOP SCROLLING AUTO</button></div>' +						
 						'<div><button name="TOPSCROLL" ng-click="scrollTop()">SCROLL TOP</button></div>' +						
 						'<div><button name="BOTTOMSCROLL" ng-click="scrollBottom()">SCROLL BOTTOM</button></div>' +						
 						'<div style="color: #FFFFFF;">- refresh {{counter}}s - #tweets : {{length}}</div>' +
@@ -227,13 +227,13 @@
 						else {
 							scroll = $(document).scrollTop();
 						 	scope.scrollInterval = interval(function() {
-								scroll += 600;
+								scroll += 800;
 								var value = scroll+'px';
-								$("html, body").animate({ scrollTop: value }, 3000, function() {
+								$("html, body").animate({ scrollTop: value }, 200, function() {
 									// $("html, body").unbind("scroll mousedown DOMMouseScroll mousewheel keyup");
 									return false; 
 								});
-							}, 5000);				
+							}, 6000);				
 					 	}					 
 					};	
 
