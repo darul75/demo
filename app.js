@@ -158,6 +158,10 @@ app.get('/', function(req, res){
     res.render('test');
 });
 
+app.get('/worldcup/*', function(req, res){ 
+    res.render('test');
+});
+
 app.get('/express-cache', function(req, res){ 
     res.render('nopartials/test');
 });
@@ -344,7 +348,7 @@ app.get(function(req, res){
 });
 
 /*app.listen(8080, function(){*/
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 3000;
 app.listen(port, function() {
     var data = fs.readFileSync(outputFile, {encoding : 'utf8'})
     

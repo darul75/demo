@@ -38,8 +38,9 @@ Twitter.prototype.auth = function(options, next) {
 
 Twitter.prototype.query = function(options, next) {
     
-    var paramSince = options.since ? '&since_id='+ options.since : '';
-	var queryUrl = 'https://api.twitter.com/1.1/search/tweets.json?q=%'+options.hashtag+paramSince;
+  var paramSince = options.since ? '&since_id='+ options.since : '';
+  var hash = encodeURIComponent(options.hashtag);
+	var queryUrl = 'https://api.twitter.com/1.1/search/tweets.json?q='+hash+paramSince;
 	
 	console.log(queryUrl);
 	console.log(bearer);

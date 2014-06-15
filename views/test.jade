@@ -2,19 +2,48 @@
 doctype 5
 html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:fb='http://ogp.me/ns/fb#')
  head
+  meta(charset="UTF-8")
+  meta(property="og:title" content="TweetWorldCup")
+  meta(property="og:type" content="website")
+  meta(property="og:description" content="Worldcup football tweets wall ( pics, hastags, tweets ) in realtime")
+  meta(property="og:url" content="http://worldcup.elasticbeanstalk.com/")
+  meta(property="og:image" content="http://worldcup.elasticbeanstalk.com/images/worldcup.png")
+  meta(property="og:site_name" content="TweetWorldCup")
+  meta(name="viewport" content="initial-scale=1.0, width=1024")
   link(rel='stylesheet',href='/stylesheets/ng-twitter.css')
+  script(type='text/javascript', src='http://code.jquery.com/jquery-latest.js')
   script(type='text/javascript', src='/bower_components/angular/angular.min.js')
   script(type='text/javascript', src='/bower_components/angular-sanitize/angular-sanitize.min.js')
-  script(type='text/javascript', src='/javascripts/ng-twitter.js')
+  script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')  
+  script(type='text/javascript', src='/javascripts/ng-twitter.min.js')
+  title Worldcup football tweets wall ( pics, hastags, tweets )   
   body
+
+   h1(style='position: fixed;top: 50px;left: 20px;height: 100px;') #worldcup
+    p(style="font: 12px/1.5 Lato, Helvetica, Arial, sans-serif;color: #777;") maintained by 
+      a(href="https://github.com/darul75", target="_blank", style="font-size: 10px; color: #FFFFFF") darul75
         
    div(ng-app="myApp", ng-controller="ctrl")
-    div(tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="15", refresh="30")
+    div(tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="200", refresh="10", onlyimages="onlyimages")    
     div
         script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
    script.
-    var app = angular.module('myApp', ['ngTwitter']);
+    var app = angular.module('myApp', ['ngTwitter', 'ngRoute'])
+    .config( ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+      $locationProvider.html5Mode(true);
+    }]);
+    
     function ctrl($scope, $filter) {
-     $scope.authKey = 'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc=';
-     $scope.hashtag = 'football';
+       $scope.authKey = 'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc=';
+       $scope.hashtag = 'worldcup';
     }
+
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-45895157-16', 'worldcup.elasticbeanstalk.com');
+    ga('send', 'pageview');  
+            
+    
