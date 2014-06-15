@@ -227,13 +227,13 @@
 						else {
 							scroll = $(document).scrollTop();
 						 	scope.scrollInterval = interval(function() {
-								scroll += 300;
+								scroll += 600;
 								var value = scroll+'px';
-								$("html, body").animate({ scrollTop: value }, 2000, function() {
+								$("html, body").animate({ scrollTop: value }, 3000, function() {
 									// $("html, body").unbind("scroll mousedown DOMMouseScroll mousewheel keyup");
 									return false; 
 								});
-							}, 2000);				
+							}, 5000);				
 					 	}					 
 					};	
 
