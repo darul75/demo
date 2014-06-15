@@ -51,6 +51,12 @@
 					if (tweet.entities.media && tweet.entities.media[0]) {
 						result += '<div><a href="' + tweet.entities.media[0].expanded_url + '" target="_blank"><img src="' + tweet.entities.media[0].media_url + '" /></a></div>'; 
 					}
+
+					result += 
+					'<span class="info" ng-show="!onlyimages">' +							
+								'<a title="Go to twitter page" class="user" href="http://twitter.com/'+tweet.user.screen_name+'" target="_blank">'+tweet.user.screen_name+'</a>'+ 
+								'<span title="Retweet Count" class="retweet">'+tweet.retweet_count+'</span>' + 
+							'</span>';
 					return result;
 				}
 			};
@@ -95,11 +101,7 @@
 					'<div class="styled-select"><select ng-model="hashtag" ng-options="r.id for r in matchs" ng-change="resetTweets()"></select></div>' +						
 					'<ul class="tweetFavList">'+ 
 						'<li ng-repeat="tweet in tweets">' +
-							'<p class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></p>' +
-							'<div class="info" ng-show="!onlyimages">' +							
-								'<a title="Go to twitter page" class="user" href="http://twitter.com/{{tweet.user.screen_name}}" target="_blank">{{tweet.user.screen_name}}</a>'+ 
-								'<span title="Retweet Count" class="retweet">{{tweet.retweet_count}}</span>' + 
-							'</div>' +
+							'<p class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></p>' +							
 					'</li></ul>',
 				link : function(scope, element, attrs) {
 					scope.matchs = [
@@ -205,26 +207,33 @@
 								since_id = d.data.search_metadata.since_id;
 							}							
 						});
-					};			
+					};						
 
-					// Stop the animation if the user scrolls. Defaults on .stop() should be fine
-					$("html, body").bind("scroll mousedown DOMMouseScroll mousewheel keyup", function(e){
-					    if ( e.which > 0 || e.type === "mousedown" || e.type === "mousewheel"){
-					         $("html, body").stop().unbind('scroll mousedown DOMMouseScroll mousewheel keyup'); // This identifies the scroll as a user action, stops the animation, then unbinds the event straight after (optional)
-					    }
-					}); 
-				
-					scope.scroll = function() {
-						if (scope.scrollInterval) {
-							$("html, body").stop();
+					$("#scroller").hover(function(){
+			            if (scope.scrollInterval) {							
 							interval.cancel(scope.scrollInterval);
 							scope.scrollInterval = null;							
+							$("html, body").stop(true);
+						}
+			        }, function(){
+			            //tweenToNewSpeed(controller.fullSpeed);
+			        });
+				
+					scope.scroll = function() {
+						if (scope.scrollInterval) {							
+							interval.cancel(scope.scrollInterval);
+							scope.scrollInterval = null;							
+							$("html, body").stop(true);
 						}
 						else {
+							scroll = $(document).scrollTop();
 						 	scope.scrollInterval = interval(function() {
 								scroll += 300;
 								var value = scroll+'px';
-								$("html, body").animate({ scrollTop: value }, 3000);
+								$("html, body").animate({ scrollTop: value }, 2000, function() {
+									// $("html, body").unbind("scroll mousedown DOMMouseScroll mousewheel keyup");
+									return false; 
+								});
 							}, 2000);				
 					 	}					 
 					};	

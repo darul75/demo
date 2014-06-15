@@ -93,6 +93,7 @@ ul.tweetFavList li {
 ul.tweetFavList .info{
     overflow: hidden;
     padding: 5px 0 5px;
+    margin-left: 10px;
 }
 
 /* The colorful info boxes */
@@ -100,7 +101,7 @@ ul.tweetFavList .info{
 ul.tweetFavList .user,
 ul.tweetFavList .retweet,
 ul.tweetFavList .date{
-    float:left;
+    float:right;
     padding:4px 8px;
     color:#fff !important;
     text-decoration:none;
@@ -188,3 +189,9 @@ ul.tweetFavList li:last-child .divider{
    z-index: 20;
    color: #FFFFFF;
 }
+
+/*#scroller {
+    height: 800px;
+    width: 100%;
+    overflow: scroll
+}*/
