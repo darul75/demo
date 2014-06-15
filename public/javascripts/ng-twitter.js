@@ -93,10 +93,9 @@
 						'<div><button name="BOTTOMSCROLL" ng-click="scrollBottom()">SCROLL BOTTOM</button></div>' +						
 						'<div style="color: #FFFFFF;">- refresh {{counter}}s - #tweets : {{length}}</div>' +
 					'</div>' +				
-					'<div class="panel" ng-show="hash">' +
-						
+					// '<div class="panel" ng-show="hash">' +						
 						// '<input type="text" name="input" ng-model="hashtag">' +
-					'</div>' +
+					// '</div>' +
 					'<div class="styled-select">SELECT MATCH HERE:</div>' +
 					'<div class="styled-select"><select ng-model="hashtag" ng-options="r.id for r in matchs" ng-change="resetTweets()"></select></div>' +						
 					'<ul class="tweetFavList">'+ 
