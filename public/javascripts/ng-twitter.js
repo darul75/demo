@@ -83,7 +83,7 @@
 				scope: { key:'=', hashtag: '=', refresh:'@', button:'@', hash:'@', count:'@'},			
 				template: 
 					'<div class="panel" ng-show="button">' + 						
-						'<div><button name="START" ng-click="startTimeout()" ng-show="stop">FETCH NEW TWEETS</button>' + 
+						/*'<div><button name="START" ng-click="startTimeout()" ng-show="stop">FETCH NEW TWEETS</button>' + 
 						'<button name="STOP" ng-click="stopTimeout()" ng-show="!stop" class="active">STOP FETCHING TWEETS</button></div>' +
 						'<div><button name="ONLYIMAGES" ng-click="onlyImages()" ng-show="!onlyimages">PICS ONLY</button>' +
 						'<button name="EVERYTHING" ng-click="onlyImages()" ng-show="onlyimages" class="active">EVERYTHING</button></div>' +
@@ -91,13 +91,13 @@
 						'<button name="STOPSCROLL" ng-click="scroll()" ng-show="scrollInterval" class="active">STOP SCROLLING AUTO</button></div>' +						
 						'<div><button name="TOPSCROLL" ng-click="scrollTop()">SCROLL TOP</button></div>' +						
 						'<div><button name="BOTTOMSCROLL" ng-click="scrollBottom()">SCROLL BOTTOM</button></div>' +						
-						'<div style="color: #FFFFFF;">- refresh {{counter}}s - #tweets : {{length}}</div>' +
+						'<div style="color: #FFFFFF;">- refresh {{counter}}s - #tweets : {{length}}</div>' +*/
 					'</div>' +				
 					// '<div class="panel" ng-show="hash">' +						
 						// '<input type="text" name="input" ng-model="hashtag">' +
 					// '</div>' +
-					'<div class="styled-select">SELECT MATCH HERE:</div>' +
-					'<div class="styled-select"><select ng-model="hashtag" ng-options="r.id for r in matchs" ng-change="resetTweets()"></select></div>' +						
+					/*'<div class="styled-select">SELECT MATCH HERE:</div>' +
+					'<div class="styled-select"><select ng-model="hashtag" ng-options="r.id for r in matchs" ng-change="resetTweets()"></select></div>' +						*/
 					'<ul class="tweetFavList">'+ 
 						'<li ng-repeat="tweet in tweets">' +
 							'<p class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></p>' +							
@@ -252,6 +252,10 @@
 					scope.onlyImages = function() {
 						scope.onlyimages = !scope.onlyimages;
 					};
+
+					scope.$on('match', function(e, msg) {
+						console.log(msg);
+					});
 
 					scope.resetTweets = function() {						
 						location.path('/worldcup/'+scope.hashtag.route);

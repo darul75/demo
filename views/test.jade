@@ -10,41 +10,109 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
   meta(property="og:image" content="http://worldcup.elasticbeanstalk.com/images/worldcup.png")
   meta(property="og:site_name" content="TweetWorldCup")
   meta(name="viewport" content="initial-scale=1.0, width=1024")
+  link(rel='stylesheet',href='/bower_components/bootstrap/dist/css/bootstrap.css')
   link(rel='stylesheet',href='/stylesheets/ng-twitter.css')
   link(rel="icon" type="image/png" href="/images/Soccer_ball_icon_16.png")
   script(type='text/javascript', src='http://code.jquery.com/jquery-latest.js')
+  script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
   script(type='text/javascript', src='/bower_components/angular/angular.min.js')
   script(type='text/javascript', src='/bower_components/angular-sanitize/angular-sanitize.min.js')
   script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')  
-  script(type='text/javascript', src='/javascripts/ng-twitter.min.js')
+  script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')
+  script(type='text/javascript', src='/javascripts/ng-twitter.js')
   title Worldcup football tweets wall ( pics, hastags, tweets )   
-  body
+  body(ng-app="myApp", ng-controller="ctrl")
 
-   h1(style='position: fixed;top: 50px;left: 20px;height: 100px;') #worldcup
-    p(style="font: 12px/1.5 Lato, Helvetica, Arial, sans-serif;color: #777;") maintained by 
-      a(href="https://github.com/darul75", target="_blank", style="font-size: 10px; color: #FFFFFF") darul75
+    //- NAVBAR
+    div.navbar.navbar-inverse.navbar-fixed-top(role="navigation")
+      div.container-fluid        
+        div.navbar-header
+          button(type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse")
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar          
+          a.navbar-brand(href="#") #WorldCup
+        div.collapse.navbar-collapse(id="navbar-collapse")
+          ul.nav.navbar-nav
+            //- li.active
+            //-   a(href="#") Link
+            li.dropdown.active
+              a(href="#" class="dropdown-toggle" data-toggle="dropdown") Select match here
+                b.caret                    
+              ul.dropdown-menu(role="menu")
+                li(ng-repeat="m in matchs")
+                  a(href="#", ng-click="match(m)") {{m.id}}
+  
+    //- MAIN
+    div.container-fluid
+      div.row
+        div.col-sm-3.col-md-2.sidebar
+          ul.nav.nav-sidebar
+            li
+              a(href="#", ng-click="startTimeout()") FETCH NEW TWEETS
+            li
+              a(href="#", ng-click="stopTimeout()") STOP FETCHING TWEETS
+            li
+              a(href="#", ng-click="onlyImages()") PICS ONLY
+            li
+              a(href="#", ng-click="onlyImages()") EVERYTHING
+            li
+              a(href="#", ng-click="scroll()") SCROLL AUTO
+            li
+              a(href="#", ng-click="scroll()") STOP SCROLLING AUTO            
+        div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+          div
+            div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")
+
+
+    footer    
+      h1(style='position: relative;top: 50px;left: 20px;height: 100px;') #WorldCup
+        p(style="font: 12px/1.5 Lato, Helvetica, Arial, sans-serif;color: #777;") maintained by 
+          a(href="https://github.com/darul75", target="_blank", style="font-size: 10px; color: #FFFFFF") darul75
         
-   div(ng-app="myApp", ng-controller="ctrl")
-    div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")    
-    div
-      script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
-   script.
-    var app = angular.module('myApp', ['ngTwitter', 'ngRoute'])
-    .config( ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-      $locationProvider.html5Mode(true);
-    }]);
-    
-    function ctrl($scope, $filter) {
-       $scope.authKey = 'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc=';
-       $scope.hashtag = 'worldcup';
-    }
+      
+      div
+        script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
+   
+    script.
+      var app = angular.module('myApp', ['ngTwitter', 'ngRoute'])
+      .config( ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+        $locationProvider.html5Mode(true);
+      }]);
+      
+      function ctrl($scope, $filter) {
+        $scope.authKey = 'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc=';
+        $scope.hashtag = 'worldcup';
 
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        $scope.matchs = [
+            {id: "Worlcup, select MATCH HERE !!", value: "#worldcup", route: "worldcup" },
+            {id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206" },
+            {id: "13/06 - Mexique vs Cameroun", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306" },
+            {id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306" },
+            {id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406" },
+            {id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406" },
+            {id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406" },
+            {id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506" },
+            {id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506" },
+            {id: "15/06 - Switzerland vs Equator", value: "#SWIECU OR #SWIvsECU OR #SWIvECU", route: "SWIvsECU_1506" },
+            {id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506" },
+            {id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606" },
+            {id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606" },
+            {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606" }
+          ];
 
-    ga('create', 'UA-45895157-16', 'worldcup.elasticbeanstalk.com');
-    ga('send', 'pageview');  
-            
-    
+        $scope.match = function(match)  {
+          $scope.$broadcast('match', match);
+        }; 
+      }
+
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-45895157-16', 'worldcup.elasticbeanstalk.com');
+      ga('send', 'pageview');  
+                
+   
