@@ -49,7 +49,7 @@
 					}
 
 					if (tweet.entities.media && tweet.entities.media[0]) {
-						result += '<div><a href="' + tweet.entities.media[0].expanded_url + '" target="_blank"><img src="' + tweet.entities.media[0].media_url + '" /></a></div>'; 
+						result += '<div><a href="' + tweet.entities.media[0].expanded_url + '" target="_blank"><img class="img-rounded img-responsive" src="' + tweet.entities.media[0].media_url + '" /></a></div>'; 
 					}
 
 					result += 
@@ -77,48 +77,51 @@
 			};
         }])
 		// DIRECTIVE
-		.directive('tweets', ['$timeout', '$interval', '$rootScope', '$location', 'twitter', 'linkify', function(timeout, interval, rootScope, location, twitter, linkify) {
+		.directive('tweets', ['$timeout', '$interval', '$rootScope', '$location', '$compile', 'twitter', 'linkify', function(timeout, interval, rootScope, location, compile, twitter, linkify) {
 			return {
 				restrict : 'AE',
 				scope: { key:'=', hashtag: '=', refresh:'@', button:'@', hash:'@', count:'@'},			
 				template: 
-					'<div class="panel" ng-show="button">' + 						
+					'<div class="" ng-show="button">' + 						
 						/*'<div><button name="START" ng-click="startTimeout()" ng-show="stop">FETCH NEW TWEETS</button>' + 
 						'<button name="STOP" ng-click="stopTimeout()" ng-show="!stop" class="active">STOP FETCHING TWEETS</button></div>' +
 						'<div><button name="ONLYIMAGES" ng-click="onlyImages()" ng-show="!onlyimages">PICS ONLY</button>' +
-						'<button name="EVERYTHING" ng-click="onlyImages()" ng-show="onlyimages" class="active">EVERYTHING</button></div>' +
-						'<div><button name="SCROLL" ng-click="scroll()" ng-show="!scrollInterval">SCROLL AUTO</button>' +
-						'<button name="STOPSCROLL" ng-click="scroll()" ng-show="scrollInterval" class="active">STOP SCROLLING AUTO</button></div>' +						
-						'<div><button name="TOPSCROLL" ng-click="scrollTop()">SCROLL TOP</button></div>' +						
-						'<div><button name="BOTTOMSCROLL" ng-click="scrollBottom()">SCROLL BOTTOM</button></div>' +						
-						'<div style="color: #FFFFFF;">- refresh {{counter}}s - #tweets : {{length}}</div>' +*/
+						*/
+						// '<button name="EVERYTHING" ng-click="images(true)" ng-show="!onlyimages" class="active">EVERYTHING</button></div>' +
+						// '<div><button name="SCROLL" ng-click="scroll()" ng-show="!scrollInterval">SCROLL AUTO</button>' +
+						// '<button name="STOPSCROLL" ng-click="scroll()" ng-show="scrollInterval" class="active">STOP SCROLLING AUTO</button></div>' +						
+						// '<div><button name="TOPSCROLL" ng-click="scrollTop()">SCROLL TOP</button></div>' +						
+						// '<div><button name="BOTTOMSCROLL" ng-click="scrollBottom()">SCROLL BOTTOM</button></div>' +						
+						// '<div style="color: #FFFFFF;">- refresh {{counter}}s - #tweets : {{length}}</div>' +*/
 					'</div>' +				
 					// '<div class="panel" ng-show="hash">' +						
 						// '<input type="text" name="input" ng-model="hashtag">' +
 					// '</div>' +
 					/*'<div class="styled-select">SELECT MATCH HERE:</div>' +
 					'<div class="styled-select"><select ng-model="hashtag" ng-options="r.id for r in matchs" ng-change="resetTweets()"></select></div>' +						*/
-					'<ul class="tweetFavList">'+ 
-						'<li ng-repeat="tweet in tweets">' +
-							'<p class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></p>' +							
-					'</li></ul>',
-				link : function(scope, element, attrs) {
+					'<div class="tweetFavList">'+ 						
+						'<div ng-repeat="tweet in tweets" class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></div>' +
+					'</div>',
+					// '<ul class="tweetFavList">'+ 
+					// 	'<li ng-repeat="tweet in tweets">' +
+					// 		'<p class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></p>' +							
+					// '</li></ul>',
+				link : function(scope, elt, attrs) {
 					scope.matchs = [
-						{id: "Worlcup, select MATCH HERE !!", value: "#worldcup", route: "worldcup" },
-						{id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206" },
-						{id: "13/06 - Mexique vs Cameroun", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306" },
-						{id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306" },
-						{id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406" },
-						{id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406" },
-						{id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406" },
-						{id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506" },
-						{id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506" },
-						{id: "15/06 - Switzerland vs Equator", value: "#SWIECU OR #SWIvsECU OR #SWIvECU", route: "SWIvsECU_1506" },
-						{id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506" },
-						{id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606" },
-						{id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606" },
+						{id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },
 						{id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606" },
-
+						{id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606" },
+						{id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606" },
+						{id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506" },
+						{id: "15/06 - Switzerland vs Equator", value: "#SWIECU OR #SWIvsECU OR #SWIvECU", route: "SWIvsECU_1506" },
+						{id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506" },
+						{id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506" },
+						{id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406" },
+						{id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406" },
+						{id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406" },
+						{id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306" },
+						{id: "13/06 - Mexique vs Cameroun", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306" },
+						{id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206" },					
 					];								
 
 					var service = twitter;
@@ -156,32 +159,6 @@
 
 					};
 
-					scope.onTimeout = function() {						
-						scope.search();
-						mytimeout = timeout(scope.onTimeout,refresh*1000);
-					};
-
-					scope.onTimeoutCounter = function() {
-						scope.counter--;						
-						mytimeoutcounter = timeout(scope.onTimeoutCounter,1000);
-					};
-
-					var mytimeout = timeout(scope.onTimeout,refresh*1000);
-					var mytimeoutcounter = timeout(scope.onTimeoutCounter,1000);
-
-					scope.stopTimeout = function() {
-						scope.counter = refresh;
-						scope.stop = true;
-						timeout.cancel(mytimeout);
-						timeout.cancel(mytimeoutcounter);
-					};
-
-					scope.startTimeout = function() {
-						scope.stop = false;
-						mytimeout = timeout(scope.onTimeout,refresh*1000);
-						mytimeoutcounter = timeout(scope.onTimeoutCounter,1000);
-					};
-
 					scope.search = function() {
 						var query = scope.hashtag.value || scope.hashtag;
 
@@ -216,26 +193,7 @@
 						}
 			        }, function(){
 			            //tweenToNewSpeed(controller.fullSpeed);
-			        });
-				
-					scope.scroll = function() {
-						if (scope.scrollInterval) {							
-							interval.cancel(scope.scrollInterval);
-							scope.scrollInterval = null;							
-							$("html, body").stop(true);
-						}
-						else {
-							scroll = $(document).scrollTop();
-						 	scope.scrollInterval = interval(function() {
-								scroll += 800;
-								var value = scroll+'px';
-								$("html, body").animate({ scrollTop: value }, 200, function() {
-									// $("html, body").unbind("scroll mousedown DOMMouseScroll mousewheel keyup");
-									return false; 
-								});
-							}, 6000);				
-					 	}					 
-					};	
+			        });								
 
 					scope.scrollTop = function() {						
 						$("html, body").animate({ scrollTop: 0 });													 				 
@@ -249,18 +207,32 @@
 						return linkify.linkify_entities(tweet, scope.onlyimages);
 					};
 
-					scope.onlyImages = function() {
-						scope.onlyimages = !scope.onlyimages;
-					};
+					scope.images = function(active) {
+						scope.onlyimages = active;
+					};					
 
-					scope.$on('match', function(e, msg) {
-						console.log(msg);
+					scope.$on('search', function(e, msg) {
+						scope.search();					
+					});
+
+					scope.$on('images', function(e, msg) {
+						timeout(function() {
+							scope.images(msg.active);
+							// scope.onlyImages = msg.active;
+							// //var el = angular.element(elt.html());							
+							// var compiled = compile(elt);
+							// //elt.html(el);
+							// compiled(scope);							
+						});						
+					});
+
+					scope.$on('scroll', function(e, msg) {
+						scope.scroll();
 					});
 
 					scope.resetTweets = function() {						
 						location.path('/worldcup/'+scope.hashtag.route);
 					};
-
 					
 				    rootScope.$on( "$locationChangeSuccess", function(event, next, current) {
 				     						

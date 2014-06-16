@@ -9,17 +9,16 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
   meta(property="og:url" content="http://worldcup.elasticbeanstalk.com/")
   meta(property="og:image" content="http://worldcup.elasticbeanstalk.com/images/worldcup.png")
   meta(property="og:site_name" content="TweetWorldCup")
-  meta(name="viewport" content="initial-scale=1.0, width=1024")
+  meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1")
   link(rel='stylesheet',href='/bower_components/bootstrap/dist/css/bootstrap.css')
-  link(rel='stylesheet',href='/stylesheets/ng-twitter.css')
+  link(rel='stylesheet',href='/stylesheets/ng-twitter.min.css')
   link(rel="icon" type="image/png" href="/images/Soccer_ball_icon_16.png")
   script(type='text/javascript', src='http://code.jquery.com/jquery-latest.js')
   script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
   script(type='text/javascript', src='/bower_components/angular/angular.min.js')
   script(type='text/javascript', src='/bower_components/angular-sanitize/angular-sanitize.min.js')
-  script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')  
-  script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')
-  script(type='text/javascript', src='/javascripts/ng-twitter.js')
+  script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')    
+  script(type='text/javascript', src='/javascripts/ng-twitter.min.js')
   title Worldcup football tweets wall ( pics, hastags, tweets )   
   body(ng-app="myApp", ng-controller="ctrl")
 
@@ -34,46 +33,57 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
             span.icon-bar          
           a.navbar-brand(href="#") #WorldCup
         div.collapse.navbar-collapse(id="navbar-collapse")
-          ul.nav.navbar-nav
-            //- li.active
-            //-   a(href="#") Link
+          ul.nav.navbar-nav            
             li.dropdown.active
-              a(href="#" class="dropdown-toggle" data-toggle="dropdown") Select match here
+              a(href="#" class="dropdown-toggle" data-toggle="dropdown") #CHOOSE #YOUR #MATCH #HERE
                 b.caret                    
               ul.dropdown-menu(role="menu")
                 li(ng-repeat="m in matchs")
-                  a(href="#", ng-click="match(m)") {{m.id}}
-  
+                  a(href="/worldcup/{{m.route}}", ng-click="match(m)") {{m.id}}
+            li.visible-xs              
+              a(href="#", ng-click="timeout(true)", ng-show="fetch") FETCH NEW TWEETS
+            li.visible-xs
+              a(href="#", ng-click="timeout(false)", ng-show="!fetch") STOP FETCHING TWEETS
+            li.visible-xs
+              a(href="#", ng-click="onlyImages(true)", ng-show='!images') PICTURES ONLY
+            li.visible-xs
+              a(href="#", ng-click="onlyImages(false)", ng-show='images') PICTURES AND TEXT
+            li.visible-xs
+              a(href="#", ng-click="scroll(true)", ng-show='!scrollInterval') SCROLL AUTO
+            li.visible-xs
+              a(href="#", ng-click="scroll(false)", ng-show='scrollInterval') STOP SCROLLING AUTO      
     //- MAIN
     div.container-fluid
       div.row
-        div.col-sm-3.col-md-2.sidebar
+        div.col-sm-3.col-md-2.sidebar          
+          ul.nav.nav-sidebar            
+            li
+              a(href="#", ng-click="timeout(true)", ng-show="fetch") FETCH NEW TWEETS
+            li
+              a(href="#", ng-click="timeout(false)", ng-show="!fetch") STOP FETCHING TWEETS
+            li
+              a(href="#", ng-click="onlyImages(true)", ng-show='!images') PICTURES ONLY
+            li
+              a(href="#", ng-click="onlyImages(false)", ng-show='images') PICTURES AND TEXT
+            li
+              a(href="#", ng-click="scroll(true)", ng-show='!scrollInterval') SCROLL AUTO
+            li
+              a(href="#", ng-click="scroll(false)", ng-show='scrollInterval') STOP SCROLLING AUTO
+          ul.nav.nav-sidebar            
+            li    
+              a(href='#') Refreshing {{counter}}s
           ul.nav.nav-sidebar
-            li
-              a(href="#", ng-click="startTimeout()") FETCH NEW TWEETS
-            li
-              a(href="#", ng-click="stopTimeout()") STOP FETCHING TWEETS
-            li
-              a(href="#", ng-click="onlyImages()") PICS ONLY
-            li
-              a(href="#", ng-click="onlyImages()") EVERYTHING
-            li
-              a(href="#", ng-click="scroll()") SCROLL AUTO
-            li
-              a(href="#", ng-click="scroll()") STOP SCROLLING AUTO            
-        div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-          div
-            div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")
-
-
+            li(ng-repeat="m in matchs")
+                  a(href="/worldcup/{{m.route}}", ng-click="match(m)", ng-show="$index > 0") {{m.id}}
+        div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main          
+          div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")            
     footer    
       h1(style='position: relative;top: 50px;left: 20px;height: 100px;') #WorldCup
         p(style="font: 12px/1.5 Lato, Helvetica, Arial, sans-serif;color: #777;") maintained by 
           a(href="https://github.com/darul75", target="_blank", style="font-size: 10px; color: #FFFFFF") darul75
-        
-      
-      div
-        script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
+              
+      //- div
+      //-   script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
    
     script.
       var app = angular.module('myApp', ['ngTwitter', 'ngRoute'])
@@ -81,30 +91,102 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
         $locationProvider.html5Mode(true);
       }]);
       
-      function ctrl($scope, $filter) {
+      function ctrl($scope, $filter, $timeout, $interval) {
         $scope.authKey = 'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc=';
         $scope.hashtag = 'worldcup';
 
         $scope.matchs = [
-            {id: "Worlcup, select MATCH HERE !!", value: "#worldcup", route: "worldcup" },
-            {id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206" },
-            {id: "13/06 - Mexique vs Cameroun", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306" },
-            {id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306" },
-            {id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406" },
-            {id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406" },
-            {id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406" },
-            {id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506" },
-            {id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506" },
-            {id: "15/06 - Switzerland vs Equator", value: "#SWIECU OR #SWIvsECU OR #SWIvECU", route: "SWIvsECU_1506" },
-            {id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506" },
-            {id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606" },
+            {id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },            
+            {id: "17/06 - Brazil vs Mexico", value: "#BRAvsMEX OR #BRAvMEX OR #BRAMEX", route: "#BRAvsMEX_1706" },
+            {id: "17/06 - Belgium vs Algeria", value: "#BELvsALG OR #BELvALG OR #BELALG", route: "#BELvsALG_1706" },
+            {id: "17/06 - Ghana vs USA", value: "#GHAvsUSA OR #GHAvUSA OR #GHAUSA", route: "#GHAvsUSA_1706" },  
+            {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606" },
             {id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606" },
-            {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606" }
+            {id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606" },
+            {id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506" },
+            {id: "15/06 - Switzerland vs Equator", value: "#SWIECU OR #SWIvsECU OR #SWIvECU", route: "SWIvsECU_1506" },
+            {id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506" },
+            {id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506" },
+            {id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406" },
+            {id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406" },
+            {id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406" },
+            {id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306" },
+            {id: "13/06 - Mexique vs Cameroun", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306" },
+            {id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206" },
           ];
+
+        $scope.counter = 5;
+        var refresh = $scope.refresh ? $scope.refresh : 5;
+
+        $scope.onTimeout = function() {            
+          $scope.search();
+          mytimeout = $timeout($scope.onTimeout,refresh*1000);
+        };
+
+        $scope.onTimeoutCounter = function() {
+          $scope.counter--;            
+          mytimeoutcounter = $timeout($scope.onTimeoutCounter,1000);
+        };
+
+        var mytimeout = $timeout($scope.onTimeout,refresh*1000);
+        var mytimeoutcounter = $timeout($scope.onTimeoutCounter,1000);
+
+        $scope.stopTimeout = function() {
+          $scope.counter = refresh;
+          $scope.stop = true;
+          $timeout.cancel(mytimeout);
+          $timeout.cancel(mytimeoutcounter);
+        };
+
+        $scope.startTimeout = function() {
+          $scope.stop = false;
+          mytimeout = $timeout($scope.onTimeout,refresh*1000);
+          mytimeoutcounter = $timeout($scope.onTimeoutCounter,1000);
+        };
 
         $scope.match = function(match)  {
           $scope.$broadcast('match', match);
-        }; 
+        };
+
+        $scope.timeout = function(fetch)  {
+          if (fetch) {
+              $scope.startTimeout();
+          }
+          else {
+            $scope.stopTimeout();  
+          }
+          $scope.fetch = !$scope.fetch;
+        };
+
+        $scope.search = function()  {
+          $scope.$broadcast('search', {active: true});
+          $scope.counter = refresh;
+        };
+
+        $scope.onlyImages = function(img)  {
+          $scope.images = !$scope.images;
+          $scope.$broadcast('images', {active: img});
+        };
+
+        $scope.scroll = function(scroll)  {
+          if ($scope.scrollInterval) {            
+            $interval.cancel($scope.scrollInterval);
+            $scope.scrollInterval = null;              
+            $("html, body").stop(true);
+          }
+          else {
+            var scroll = $(document).scrollTop();
+            $scope.scrollInterval = $interval(function() {
+              scroll += 400;
+              var value = scroll+'px';
+              $("html, body").animate({ scrollTop: value }, 1000, function() {
+                // $("html, body").unbind("scroll mousedown DOMMouseScroll mousewheel keyup");
+                return false; 
+              });
+            }, 3000);          
+          }
+        };
+
       }
 
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
