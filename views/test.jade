@@ -53,7 +53,7 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
             li.visible-xs
               a(href="#", ng-click="scroll(false)", ng-show='scrollInterval') STOP SCROLLING AUTO      
     //- MAIN
-    div.container-fluid
+    div.container-fluid.main
       div.row
         div.col-sm-3.col-md-2.sidebar          
           ul.nav.nav-sidebar            
@@ -75,7 +75,7 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
           ul.nav.nav-sidebar
             li(ng-repeat="m in matchs")
                   a(href="/worldcup/{{m.route}}", ng-click="match(m)", ng-show="$index > 0") {{m.id}}
-        div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main          
+        div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2          
           div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")            
     footer    
       h1(style='position: relative;top: 50px;left: 20px;height: 100px;') #WorldCup

@@ -82,7 +82,7 @@
 				restrict : 'AE',
 				scope: { key:'=', hashtag: '=', refresh:'@', button:'@', hash:'@', count:'@'},			
 				template: 
-					'<div class="" ng-show="button">' + 						
+					// '<div class="" ng-show="button">' + 						
 						/*'<div><button name="START" ng-click="startTimeout()" ng-show="stop">FETCH NEW TWEETS</button>' + 
 						'<button name="STOP" ng-click="stopTimeout()" ng-show="!stop" class="active">STOP FETCHING TWEETS</button></div>' +
 						'<div><button name="ONLYIMAGES" ng-click="onlyImages()" ng-show="!onlyimages">PICS ONLY</button>' +
@@ -93,7 +93,7 @@
 						// '<div><button name="TOPSCROLL" ng-click="scrollTop()">SCROLL TOP</button></div>' +						
 						// '<div><button name="BOTTOMSCROLL" ng-click="scrollBottom()">SCROLL BOTTOM</button></div>' +						
 						// '<div style="color: #FFFFFF;">- refresh {{counter}}s - #tweets : {{length}}</div>' +*/
-					'</div>' +				
+					// '</div>' +				
 					// '<div class="panel" ng-show="hash">' +						
 						// '<input type="text" name="input" ng-model="hashtag">' +
 					// '</div>' +
