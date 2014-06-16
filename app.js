@@ -31,8 +31,7 @@ var twit = new twitter2({
   access_token_secret: access_token_secret
 });
 
-var tweets = [];
-var outputFile = __dirname+'/tweets.json';
+var featuresTweets = [];
 
 var newTweet = function newTweet(tweet)
 {  
@@ -50,47 +49,32 @@ var newTweet = function newTweet(tweet)
       }
   };
 
-  if (tweets.length === 100000000) {
-    tweets = [];
-    app.set("tweetJSON", JSON.stringify({result:'nok'}));
-  }
+  featuresTweets.push(o);
 
-  tweets.push(o);
-
-  if (tweets.length % 6 === 0) {  
-
-      console.log(tweets.length);
-
-      createTopologyTweets();
-      
-      writeTweetsFile();
-
-    }
-}
-
-function createTopologyTweets() {
-    
-    var newArray =  JSON.parse(JSON.stringify(tweets));
-    
-    var collection = {type: "FeatureCollection", features: tweets};
-    var topology = topojson.topology({collection: collection}, {"property-transform":function propertyTransform(properties, key, value) {
+  if (featuresTweets.length % 10 === 0) {      
+      outputFile = __dirname+'/public/tweets.json';
+      var newArray = JSON.parse(JSON.stringify(featuresTweets));
+      var collection = {type: "FeatureCollection", features: featuresTweets};
+      var topology = topojson.topology({collection: collection}, {"property-transform":function propertyTransform(properties, key, value) {
           properties[key] = value;
           return true;
         }
-    }); // convert to TopoJSON
-    
-    tweets = newArray;
-    
-    app.set("tweetJSON", JSON.stringify(topology));
+      }); // convert to TopoJSON
+
+      featuresTweets = newArray;
+
+      //console.log(JSON.stringify(featuresTweets));
+
+      // var json = JSON.stringify(collection);
+      app.set("tweetJSON", JSON.stringify(topology));
+      // fs.writeFile(outputFile, JSON.stringify(topology), function (err) {
+      //   //console.log(writed);
+      //   //fs.writeFileSync(outputFile, JSON.stringify(topology));
+      // });
+    }
 }
 
-function writeTweetsFile() {
-    fs.writeFile(outputFile, JSON.stringify(tweets), {encoding:'utf8'},function (err) {
-         
-    });
-}
-
-twit.stream('statuses/filter', {'track':'football,futebol,fútbol,Fußball,футбол,サッカー'}, function(stream) {
+twit.stream('statuses/filter', {'track':'football'}, function(stream) {
   stream.on('data', function (data) {
     if (data.geo)
       eventEmitter.emit('newTweet', data);
@@ -101,15 +85,13 @@ eventEmitter.on('newTweet', newTweet);
 
 // SMALL CRON
 var job = new cronJob({
-  cronTime: '* */20 * * * 1-7',
+  cronTime: '00 00 00 * * 1-7',
   onTick: function() {
-    http.get("http://darul-demo.herokuapp.com/twitter", function(res) {
-        console.log("Got response: " + res.statusCode);
-    }).on('error', function(e) {
-      console.log("Got error: " + e.message);
-    });
+    featuresTweets = [];
+    app.set("tweetJSON", JSON.stringify({result:'nok'}));
   },
-  start: false
+  start: false,
+  timeZone: "America/Los_Angeles"
 });
 job.start();
 
@@ -141,6 +123,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser('your secret here'));
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
 });
 
 var options = {debug:true};
@@ -158,16 +141,12 @@ app.get('/', function(req, res){
     res.render('test');
 });
 
-app.get('/worldcup/*', function(req, res){ 
-    res.render('test');
-});
+/*app.get('/partials/test', function(req, res){ 
+    res.render('partials/test');
+});*/
 
 app.get('/express-cache', function(req, res){ 
     res.render('nopartials/test');
-});
-
-app.get('/audio', function(req, res){ 
-    res.render('audio');
 });
 
 app.get('/satelize', function(req, res){ 
@@ -202,12 +181,11 @@ app.get('/twitter', function(req, res) {
   res.end(app.get("tweetJSON"));
 });
 
-app.set("lastUrls", []);
+var lastUrls = [];
 
 app.post('/capturewebquery', function(req, res){ 
   var params = req.body;
   
-    var lastUrls = app.get('lastUrls');
     if (lastUrls.indexOf(params.url) < 0) {
         if (lastUrls.length == 10)
             lastUrls.pop();
@@ -231,9 +209,10 @@ app.post('/capturewebquery', function(req, res){
 });
 
 app.get('/capturewebquerylasturls', function(req, res){ 
+	var top10 = app.get("lastUrls");
     
     res.writeHead(200, {"Content-Type": "application/json"});
-    var json = JSON.stringify(app.get('lastUrls'));
+    var json = JSON.stringify(top10);
     res.end(json);
     
 });
@@ -350,22 +329,11 @@ app.get(function(req, res){
 /*app.listen(8080, function(){*/
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
-    var data = fs.readFileSync(outputFile, {encoding : 'utf8'})
-    
-    if (!data || data === '')
-        app.set("tweetJSON", JSON.stringify({result:'nok'}));
-    else {
-        tweets = JSON.parse(data);
-        if (tweets && tweets.length > 0) {
-            createTopologyTweets();
-        }
-        else
-            app.set("tweetJSON", JSON.stringify({result:'nok'}));    
-    }
-  
+  app.set("tweetJSON", JSON.stringify({result:'nok'}));
 	if (!init) {
         twitter.auth(options, function(err, data) {
           init=true;
+        
         });
     }
 });
