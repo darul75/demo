@@ -109,6 +109,9 @@
 				link : function(scope, elt, attrs) {
 					scope.matchs = [
 						{id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },            
+                       	{id: "18/06 - Spain vs Chili", value: "#SPAvsCHI OR #SPAvCHI OR #SPACHI", route: "SPAvsCHI_1806" },
+			            {id: "18/06 - Australia vs Netherland", value: "#AUSvsNED OR #AUSvNED OR #AUSNED", route: "AUSvsNED_1806" },
+			            {id: "18/06 - Russia vs South Korea", value: "#RUSvsKOR OR RUSvKOR OR RUSKOR", route: "RUSvsKOR_1806" },
 			            {id: "17/06 - Brazil vs Mexico", value: "#BRAvsMEX OR #BRAvMEX OR #BRAMEX", route: "BRAvsMEX_1706" },
 			            {id: "17/06 - Belgium vs Algeria", value: "#BELvsALG OR #BELvALG OR #BELALG", route: "BELvsALG_1706" },
 			            {id: "17/06 - Ghana vs USA", value: "#GHAvsUSA OR #GHAvUSA OR #GHAUSA", route: "GHAvsUSA_1706" },
