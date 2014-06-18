@@ -294,6 +294,7 @@ app.get('/queryworldcupscore', function(req, res){
 
     for (var i=0;i<matchs.length;i++) {
       var match = matchs[i];
+      o['status'] = match.status;
       if (match.home_team && match.home_team.code === codeteam && match.away_team && match.away_team.code === codeawayteam) {
         o['home_team'] = match.home_team.goals;
         o['away_team'] = match.away_team.goals;

@@ -124,7 +124,7 @@
 			            {id: "17/06 - Brazil vs Mexico", value: "#BRAvsMEX OR #BRAvMEX OR #BRAMEX", route: "BRAvsMEX_1706", codeteam:'BRA',  codeawayteam:'MEX'},
 			            {id: "17/06 - Belgium vs Algeria", value: "#BELvsALG OR #BELvALG OR #BELALG", route: "BELvsALG_1706", codeteam:'BEL',  codeawayteam:'ALG'},
 			            {id: "17/06 - Ghana vs USA", value: "#GHAvsUSA OR #GHAvUSA OR #GHAUSA", route: "GHAvsUSA_1706", codeteam:'GHA',  codeawayteam:'USA'},
-			            {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606", codeteam:'IRA',  codeawayteam:'NIG'},
+			            {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606", codeteam:'IRN',  codeawayteam:'NGA'},
 			            {id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606", codeteam:'GER',  codeawayteam:'POR'},
 			            {id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606", codeteam:'ARG',  codeawayteam:'BIH'},
 			            {id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506", codeteam:'FRA',  codeawayteam:'HON'},
@@ -219,7 +219,8 @@
 								scores.asyncSearch(scope.hashtag.codeteam, scope.hashtag.codeawayteam).then(function(d) {
 									if (d && d.data && d.data.away_team >= 0 && d.data.home_team >= 0 ) {
 										result.home_team = d.data.home_team;
-										result.away_team = d.data.away_team;										
+										result.away_team = d.data.away_team;
+										result.status = d.data.status;										
 									}
 
 									scope.$emit('searchResult', result);
@@ -294,9 +295,8 @@
 				      			scope.hashtag = match;				      			
 				      		}				      		
 				      	}
-
-				      	if (scope.hashtag.route === scope.matchs[0].route)
-				      		scope.$emit('resetRoute', {});
+				      	
+				      	scope.$emit('newRoute', scope.hashtag);
 
 
 				      });

@@ -42,7 +42,11 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
                 li(ng-repeat="m in matchs")
                   a(href="/worldcup/{{m.route}}", ng-click="match(m)") {{m.id}}
             li.hidden-xs              
-              a(href="#", style='font-size: 3em;', ng-show="score") {{score}}
+              a(href="#") 
+                span(style='font-size: 3em;', ng-show="score")
+                  {{score}} 
+                span(style='font-size: 1.3em;', ng-show="status")
+                  {{status}}                
             li.visible-xs              
               a(href="#", ng-click="timeout(true)", ng-show="fetch") FETCH NEW TWEETS
             li.visible-xs
@@ -88,8 +92,8 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
             li    
               a(href='#', ng-if='skipping > 0')  Skiping some RT: {{skipping}}                       
         div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2
-          div.visible-xs(style='font-size: 2em;', ng-if="score")
-            p SCORE: {{score}}            
+          div.visible-xs(style='font-size: 1em;')
+            span(ng-show="score") SCORE: {{score}} {{status}}                       
           div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")            
     footer    
       h1(style='position: relative;top: 50px;left: 20px;height: 100px;') #WorldCup
@@ -110,8 +114,8 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
         $scope.hashtag = 'worldcup';
         $scope.tweetCount = 0;    
 
-        $scope.$on('resetRoute', function(err, msg) {
-          $scope.currentRoute = '';
+        $scope.$on('newRoute', function(err, msg) {
+          $scope.currentRoute = msg.route;          
         });    
 
         $scope.$on('searchResult', function(e, msg) {
@@ -119,9 +123,12 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
           // scores
           if (msg.away_team >= 0 && msg.home_team >= 0) {
             $scope.score = msg.home_team + ' - ' + msg.away_team;
+            $scope.status = msg.status;            
           }
-          else
+          else {
             $scope.score = '';
+            $scope.status = '';
+          }
           // skip
           if (msg.skipping) {
             var cnt = 1;
@@ -150,7 +157,7 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
           {id: "17/06 - Brazil vs Mexico", value: "#BRAvsMEX OR #BRAvMEX OR #BRAMEX", route: "BRAvsMEX_1706", codeteam:'BRA',  codeawayteam:'MEX'},
           {id: "17/06 - Belgium vs Algeria", value: "#BELvsALG OR #BELvALG OR #BELALG", route: "BELvsALG_1706", codeteam:'BEL',  codeawayteam:'ALG'},
           {id: "17/06 - Ghana vs USA", value: "#GHAvsUSA OR #GHAvUSA OR #GHAUSA", route: "GHAvsUSA_1706", codeteam:'GHA',  codeawayteam:'USA'},
-          {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606", codeteam:'IRA',  codeawayteam:'NIG'},
+          {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606", codeteam:'IRN',  codeawayteam:'NGA'},
           {id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606", codeteam:'GER',  codeawayteam:'POR'},
           {id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606", codeteam:'ARG',  codeawayteam:'BIH'},
           {id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506", codeteam:'FRA',  codeawayteam:'HON'},
