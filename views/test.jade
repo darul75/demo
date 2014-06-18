@@ -20,7 +20,7 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
   script(type='text/javascript', src='/bower_components/angular-sanitize/angular-sanitize.min.js')
   script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')    
   script(type='text/javascript', src='/javascripts/ng-twitter.min.js')
-  title Worldcup football tweets wall ( pics, hastags, tweets )   
+  title Worldcup football tweets wall ( pics, hastags, tweets, live score )   
   body(ng-app="myApp", ng-controller="ctrl")
 
     //- NAVBAR
@@ -32,15 +32,17 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
             span.icon-bar
             span.icon-bar
             span.icon-bar          
-          a.navbar-brand(href="#") #WorldCup
+          a.navbar-brand(href="/worldcup/worldcup") #WorldCup
         div.collapse.navbar-collapse(id="navbar-collapse")
           ul.nav.navbar-nav            
             li.dropdown.active
-              a(href="#" class="dropdown-toggle" data-toggle="dropdown") #CHOOSE #YOUR #MATCH #HERE
+              a(href="#" class="dropdown-toggle" data-toggle="dropdown") #CHOOSE #YOUR #MATCH
                 b.caret                    
               ul.dropdown-menu(role="menu")
                 li(ng-repeat="m in matchs")
                   a(href="/worldcup/{{m.route}}", ng-click="match(m)") {{m.id}}
+            li.hidden-xs              
+              a(href="#", style='font-size: 3em;', ng-show="score") {{score}}
             li.visible-xs              
               a(href="#", ng-click="timeout(true)", ng-show="fetch") FETCH NEW TWEETS
             li.visible-xs
@@ -53,6 +55,11 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
               a(href="#", ng-click="scroll(true)", ng-show='!scrollInterval') SCROLL AUTO
             li.visible-xs
               a(href="#", ng-click="scroll(false)", ng-show='scrollInterval') STOP SCROLLING AUTO      
+          ul.nav.navbar-nav.navbar-right            
+            li    
+              a(href='#')  Refreshing: {{counter}}s               
+            li    
+              a(href='#')  Tweets: {{tweetCount}}  
     //- MAIN
     div.container-fluid.main
       div.row
@@ -69,14 +76,20 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
             li
               a(href="#", ng-click="scroll(true)", ng-show='!scrollInterval') SCROLL AUTO
             li
-              a(href="#", ng-click="scroll(false)", ng-show='scrollInterval') STOP SCROLLING AUTO
-          ul.nav.nav-sidebar            
-            li    
-              a(href='#') Refreshing {{counter}}s
-          ul.nav.nav-sidebar
-            li(ng-repeat="m in matchs")
+              a(href="#", ng-click="scroll(false)", ng-show='scrollInterval') STOP SCROLLING AUTO          
+          ul.nav.nav-sidebar.matchs
+            li(ng-repeat="m in matchs", ng-class="currentRoute == m.route && 'active' || '' ")
                   a(href="/worldcup/{{m.route}}", ng-click="match(m)", ng-show="$index > 0") {{m.id}}
-        div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2          
+          ul.nav.nav-sidebar            
+            //-   li    
+            //-     a(href='#')  Tweets: {{tweetCount}}
+            //-   li    
+            //-     a(href='#')  Refreshing: {{counter}}s   
+            li    
+              a(href='#', ng-if='skipping > 0')  Skiping some RT: {{skipping}}                       
+        div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2
+          div.visible-xs(style='font-size: 2em;', ng-if="score")
+            p SCORE: {{score}}            
           div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")            
     footer    
       h1(style='position: relative;top: 50px;left: 20px;height: 100px;') #WorldCup
@@ -95,29 +108,62 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
       function ctrl($scope, $filter, $timeout, $interval) {
         $scope.authKey = 'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc=';
         $scope.hashtag = 'worldcup';
+        $scope.tweetCount = 0;    
+
+        $scope.$on('resetRoute', function(err, msg) {
+          $scope.currentRoute = '';
+        });    
+
+        $scope.$on('searchResult', function(e, msg) {
+          $scope.tweetCount = msg.count;
+          // scores
+          if (msg.away_team >= 0 && msg.home_team >= 0) {
+            $scope.score = msg.home_team + ' - ' + msg.away_team;
+          }
+          else
+            $scope.score = '';
+          // skip
+          if (msg.skipping) {
+            var cnt = 1;
+            $scope.skippingInterval = $interval(function() {
+              if (cnt < msg.skipping) {
+                    $scope.skipping = cnt;
+                    cnt++;
+                }
+                else {
+                    $interval.cancel($scope.skippingInterval);
+                    $scope.skipping = 0;
+                }
+            }, 100);
+            
+          }
+        });             
 
         $scope.matchs = [
-            {id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },            
-            {id: "18/06 - Spain vs Chili", value: "#SPAvsCHI OR #SPAvCHI OR #SPACHI", route: "SPAvsCHI_1806" },
-            {id: "18/06 - Australia vs Netherland", value: "#AUSvsNED OR #AUSvNED OR #AUSNED", route: "AUSvsNED_1806" },
-            {id: "18/06 - Russia vs South Korea", value: "#RUSvsKOR OR RUSvKOR OR RUSKOR", route: "RUSvsKOR_1806" },
-            {id: "17/06 - Brazil vs Mexico", value: "#BRAvsMEX OR #BRAvMEX OR #BRAMEX", route: "BRAvsMEX_1706" },
-            {id: "17/06 - Belgium vs Algeria", value: "#BELvsALG OR #BELvALG OR #BELALG", route: "BELvsALG_1706" },
-            {id: "17/06 - Ghana vs USA", value: "#GHAvsUSA OR #GHAvUSA OR #GHAUSA", route: "GHAvsUSA_1706" },
-            {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606" },
-            {id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606" },
-            {id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606" },
-            {id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506" },
-            {id: "15/06 - Switzerland vs Equator", value: "#SWIECU OR #SWIvsECU OR #SWIvECU", route: "SWIvsECU_1506" },
-            {id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506" },
-            {id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506" },
-            {id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406" },
-            {id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406" },
-            {id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406" },
-            {id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306" },
-            {id: "13/06 - Mexique vs Cameroun", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306" },
-            {id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206" }
-          ];
+          {id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },            
+          {id: "19/06 - Uruguay vs England", value: "#URUvsENG OR #URUvENG OR #URUENG", route: "URUvsENG_1906", codeteam:'URU',  codeawayteam:'ENG'},
+          {id: "19/06 - Columbia vs Ivoiry", value: "#COLvsCIV OR #COLvCIV OR #COLCIV", route: "COLvsCIV_1906", codeteam:'COL',  codeawayteam:'CIV'},
+          {id: "19/06 - Cameroon vs Crotia", value: "#CMRvsCRO OR CMRvCRO OR CMRCRO", route: "CMRvsCRO_1906", codeteam:'CMR',  codeawayteam:'CRO'},            
+          {id: "18/06 - Spain vs Chili", value: "#SPAvsCHI OR #SPAvCHI OR #SPACHI", route: "SPAvsCHI_1806", codeteam:'ESP',  codeawayteam:'CHI'},
+          {id: "18/06 - Australia vs Netherland", value: "#AUSvsNED OR #AUSvNED OR #AUSNED", route: "AUSvsNED_1806", codeteam:'AUS',  codeawayteam:'NED'},
+          {id: "18/06 - Russia vs South Korea", value: "#RUSvsKOR OR RUSvKOR OR RUSKOR", route: "RUSvsKOR_1806", codeteam:'RUS',  codeawayteam:'KOR'},
+          {id: "17/06 - Brazil vs Mexico", value: "#BRAvsMEX OR #BRAvMEX OR #BRAMEX", route: "BRAvsMEX_1706", codeteam:'BRA',  codeawayteam:'MEX'},
+          {id: "17/06 - Belgium vs Algeria", value: "#BELvsALG OR #BELvALG OR #BELALG", route: "BELvsALG_1706", codeteam:'BEL',  codeawayteam:'ALG'},
+          {id: "17/06 - Ghana vs USA", value: "#GHAvsUSA OR #GHAvUSA OR #GHAUSA", route: "GHAvsUSA_1706", codeteam:'GHA',  codeawayteam:'USA'},
+          {id: "16/06 - Iran vs Nigeria", value: "#IRAvsNIG OR #IRAvNIG OR #IRANIG", route: "IRAvsNIG_1606", codeteam:'IRA',  codeawayteam:'NIG'},
+          {id: "16/06 - Germany vs Portugal", value: "#GERvsPOR OR #GERvPOR OR #GERPOR", route: "GERvsPOR_1606", codeteam:'GER',  codeawayteam:'POR'},
+          {id: "16/06 - Argentina vs Bosnia", value: "#ARGvsBOS OR #ARGvBOS OR #ARGBOS", route: "ARGvsBOS_1606", codeteam:'ARG',  codeawayteam:'BIH'},
+          {id: "15/06 - France vs Hondura", value: "#FRAvsHON OR #FRAvHON OR #FRAHON", route: "FRAvsHON_1506", codeteam:'FRA',  codeawayteam:'HON'},
+          {id: "15/06 - Switzerland vs Equator", value: "#SWIECU OR #SWIvsECU OR #SWIvECU", route: "SWIvsECU_1506", codeteam:'SUI',  codeawayteam:'ECU'},
+          {id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506", codeteam:'CIV',  codeawayteam:'JPN'},
+          {id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506", codeteam:'ENG',  codeawayteam:'ITA'},
+          {id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406", codeteam:'URU',  codeawayteam:'CRC'},
+          {id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406", codeteam:'COL',  codeawayteam:'GRE'},
+          {id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406", codeteam:'CHI',  codeawayteam:'AUS'},
+          {id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306", codeteam:'ESP',  codeawayteam:'NED'},
+          {id: "13/06 - Mexique vs Cameroon", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306", codeteam:'MEX',  codeawayteam:'CMR'},
+          {id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206", codeteam:'BRA',  codeawayteam:'CRO'}
+        ];
 
         $scope.counter = 5;
         var refresh = $scope.refresh ? $scope.refresh : 5;
@@ -146,9 +192,10 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
           $scope.stop = false;
           mytimeout = $timeout($scope.onTimeout,refresh*1000);
           mytimeoutcounter = $timeout($scope.onTimeoutCounter,1000);
-        };
+        };          
 
         $scope.match = function(match)  {
+          $scope.currentRoute = match.route;
           $scope.$broadcast('match', match);
         };
 
@@ -189,7 +236,7 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
               });
             }, 3000);          
           }
-        };
+        };        
 
       }
 

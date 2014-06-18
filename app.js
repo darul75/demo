@@ -262,7 +262,48 @@ app.get('/querysatelize', function(req, res){
 	console.log('ip '+ip);
 	satelize.satelize({ip:ip}, function(err, geoData) {
       res.end(geoData);
-    });
+  });
+});
+
+app.get('/queryworldcupscore', function(req, res){ 
+  var codeteam = req.query.codeteam;
+  var codeawayteam = req.query.codeawayteam;
+
+  var opts = {
+    hostname: 'worldcup.sfg.io',
+    path: '/matches',
+    method: 'GET',
+    port: 80
+  };
+
+  var output = '';
+
+  var req1 = http.request(opts, function(res) {
+    res.setEncoding('utf8');    
+    res.on('data', function (chunk) { 
+      output += chunk; });
+    res.on('end', fetchScore);
+  });
+  req1.on('error', function(e) {  });      
+  req1.setTimeout(1000, function() {  });
+  req1.end();
+  
+  var fetchScore = function () {
+    var matchs = JSON.parse(output);
+    var o = {};
+
+    for (var i=0;i<matchs.length;i++) {
+      var match = matchs[i];
+      if (match.home_team && match.home_team.code === codeteam && match.away_team && match.away_team.code === codeawayteam) {
+        o['home_team'] = match.home_team.goals;
+        o['away_team'] = match.away_team.goals;
+        break;
+      }
+    }
+
+    res.json(o);
+  }; 
+  
 });
 
 app.get('/useragents', function(req, res){   

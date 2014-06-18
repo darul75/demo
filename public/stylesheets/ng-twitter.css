@@ -252,9 +252,20 @@ body {
   padding-left: 20px;
   color: #FFF;
 }
+.nav-sidebar.matchs > li > a {
+  padding: 5px 5px;
+  color: #FFF;
+}
+
 .nav-sidebar > .active > a {
   color: #fff;
   background-color: #428bca;
+}
+
+.nav > li > a {
+position: relative;
+display: block;
+/* padding: 10px 15px; */
 }
 
 
