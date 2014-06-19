@@ -278,32 +278,45 @@ app.get('/queryworldcupscore', function(req, res){
 
   var output = '';
 
-  var req1 = http.request(opts, function(res) {
-    res.setEncoding('utf8');    
-    res.on('data', function (chunk) { 
-      output += chunk; });
-    res.on('end', fetchScore);
-  });
-  req1.on('error', function(e) {  });      
-  req1.setTimeout(1000, function() {  });
-  req1.end();
+  // var req1 = http.request(opts, function(res) {
+  //   res.setEncoding('utf8');    
+  //   res.on('data', function (chunk) { 
+  //     output += chunk; });
+  //   res.on('end', fetchScore);
+  // });
+  // req1.on('error', function(e) { 
+  //   fetchScore(); 
+  // });      
+  // req1.setTimeout(1000, function() { 
+  //   fetchScore(); 
+  // });
+  // req1.end();
+
+
   
   var fetchScore = function () {
-    var matchs = JSON.parse(output);
+    
     var o = {};
 
-    for (var i=0;i<matchs.length;i++) {
-      var match = matchs[i];
-      o['status'] = match.status;
-      if (match.home_team && match.home_team.code === codeteam && match.away_team && match.away_team.code === codeawayteam) {
-        o['home_team'] = match.home_team.goals;
-        o['away_team'] = match.away_team.goals;
-        break;
+    try {
+      var matchs = JSON.parse(output);
+      for (var i=0;i<matchs.length;i++) {
+        var match = matchs[i];
+        o['status'] = match.status;
+        if (match.home_team && match.home_team.code === codeteam && match.away_team && match.away_team.code === codeawayteam) {
+          o['home_team'] = match.home_team.goals;
+          o['away_team'] = match.away_team.goals;
+          break;
+        }
       }
     }
 
-    res.json(o);
-  }; 
+    catch(e) {console.log('error while fetching scores');}    
+    
+  };
+
+  //fetchScore(); 
+  res.json({});
   
 });
 

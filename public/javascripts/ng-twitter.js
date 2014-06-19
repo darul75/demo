@@ -16,6 +16,7 @@
 					}
 					// This is very naive, should find a better way to parse this
 					var index_map = {};
+					tweet.height = 200;
 					angular.forEach(tweet.entities.urls, function(entry,i) {
 						index_map[entry.indices[0]] = [entry.indices[1], function(text) {return "<a href='"+escapeHTML(entry.url)+"' class='link' target='_blank'>"+escapeHTML(entry.display_url)+"</a>";}];
 					});
@@ -27,19 +28,15 @@
 					});
 					var img = '';
 					angular.forEach(tweet.entities.media || [], function(entry, i) {
-						img = "<a href='" + tweet.entities.media[0].expanded_url + "' target='_blank'><img class='img-rounded img-responsive' src='" + escapeHTML(entry.media_url_https || entry.media_url)+"'></img></a>";
+						tweet.height = entry.sizes.large.h;						
+						tweet.hasimg = true;
+						img = "<a href='" + tweet.entities.media[0].expanded_url + "' target='_blank'><img class='img-rounded img-responsive' style='max-height:300px;margin-top: 5px;' src='" + escapeHTML(entry.media_url_https || entry.media_url)+"'></img></a>";
         				index_map[entry.indices[0]] = [entry.indices[1], function(text) {return img}];
     				});
 
-					var result = '<table><tbody><tr><td>';
+					var result = '<table><tbody><tr><td>';					
 					var last_i = 0;
-					var i = 0;
-
-					if (tweet.user && tweet.user.profile_image_url) {
-						//result += '<img src="' + tweet.user.profile_image_url + "></img>";
-					}
-
-					result += '</td><td>';
+					var i = 0;										
 
 					// iterate through the string looking for matches in the index_map
 					if (!onlyimages) {
@@ -60,7 +57,7 @@
 							result += escapeHTML(tweet.text.substring(last_i, i));
 						}
 						
-						result += '<span class="info" ng-show="!onlyimages">' +							
+						result += '<span class="hidden-xs info" ng-show="!onlyimages">' +							
 							'<a title="Go to twitter page" class="user" href="http://twitter.com/'+tweet.user.screen_name+'" target="_blank">'+tweet.user.screen_name+'</a>'+ 
 							'<span title="Retweet Count" class="retweet">'+tweet.retweet_count+'</span>' + 
 						'</span>';
@@ -109,12 +106,25 @@
 				restrict : 'AE',
 				scope: { key:'=', hashtag: '=', refresh:'@', button:'@', hash:'@', count:'@'},			
 				template: 					
-					'<div class="tweetFavList">'+ 												
-						'<div ng-repeat="tweet in tweets track by tweet.id" class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></div>' +
-					'</div>',					
+					'<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides">'+
+						 
+						 '<script type="template/html" template-name="default" template-item="tweet">'+						 	
+						 	'<div class="tweet" ng-bind-html="tweet.html" style="height: 80px;"></div>'+						 					       
+					     '</script>'+
+					     '<script type="template/html" template-name="image" template-item="tweet">'+						 	
+						 	'<div class="tweet" ng-bind-html="tweet.html" style="height:380px;"></div>'+											       
+					     '</script>'+
+					     
+					'</div>',	
+					// OLD ONE				
+					// <div ng-repeat="tweet in tweets track by tweet.id" class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></div>
 				link : function(scope, elt, attrs) {
+
 					scope.matchs = [
 						{id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },
+						{id: "20/06 - Switzerland vs France", value: "#SWIvsFRA OR #SWIvFRA OR #SWIFRA", route: "SWIvsFRA_2006", codeteam:'SUI',  codeawayteam:'FRA'},
+			            {id: "20/06 - Italy vs Costa Rica", value: "#ITAvsCRC OR #ITAvCRC OR #ITACRC", route: "ITAvsCRC_2006", codeteam:'ITA',  codeawayteam:'CRC'},
+				        {id: "20/06 - Japan vs Greek", value: "#JPNvsGRE OR JPNvGRE OR JPNGRE", route: "CMRvsCRO_2006", codeteam:'JPN',  codeawayteam:'GRE'},
 						{id: "19/06 - Uruguay vs England", value: "#URUvsENG OR #URUvENG OR #URUENG", route: "URUvsENG_1906", codeteam:'URU',  codeawayteam:'ENG'},
 			            {id: "19/06 - Columbia vs Ivoiry", value: "#COLvsCIV OR #COLvCIV OR #COLCIV", route: "COLvsCIV_1906", codeteam:'COL',  codeawayteam:'CIV'},
 			            {id: "19/06 - Cameroon vs Crotia", value: "#CMRvsCRO OR CMRvCRO OR CMRCRO", route: "CMRvsCRO_1906", codeteam:'CMR',  codeawayteam:'CRO'},            
@@ -201,7 +211,8 @@
 									var newTweet = newTweets[i];
 									scope.RT = !newTweet.retweeted && !scope.tweetIDs[newTweet.id];
 									if (scope.RT) {
-										scope.tweetIDs[newTweet.id] = true;										
+										scope.tweetIDs[newTweet.id] = true;
+										newTweet.html = scope.prettyDisplay(newTweet);										
 										concatTweets.push(newTweet);
 									}
 									else {
@@ -216,15 +227,20 @@
 								result.count = scope.length;
 								result.skipping = skipping;
 
-								scores.asyncSearch(scope.hashtag.codeteam, scope.hashtag.codeawayteam).then(function(d) {
-									if (d && d.data && d.data.away_team >= 0 && d.data.home_team >= 0 ) {
-										result.home_team = d.data.home_team;
-										result.away_team = d.data.away_team;
-										result.status = d.data.status;										
-									}
+								// scores.asyncSearch(scope.hashtag.codeteam, scope.hashtag.codeawayteam).then(function(d) {
 
-									scope.$emit('searchResult', result);
-								});								
+								// 	if (d && d.data && d.data.away_team >= 0 && d.data.home_team >= 0 ) {
+								// 		result.home_team = d.data.home_team;
+								// 		result.away_team = d.data.away_team;
+								// 		result.status = d.data.status;										
+								// 	}
+
+									
+								// }, function(err) {
+								// 	console.log(err);
+								// });	
+
+								scope.$emit('searchResult', result);							
 																	
 								since_id = d.data.search_metadata.since_id;
 							}							

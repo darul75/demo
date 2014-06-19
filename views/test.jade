@@ -16,10 +16,11 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
   link(rel="icon" href="/images/favicon.ico")
   script(type='text/javascript', src='http://code.jquery.com/jquery-latest.js')
   script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
-  script(type='text/javascript', src='/bower_components/angular/angular.min.js')
+  script(type='text/javascript', src='/bower_components/angular/angular.js')
   script(type='text/javascript', src='/bower_components/angular-sanitize/angular-sanitize.min.js')
   script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')    
   script(type='text/javascript', src='/javascripts/ng-twitter.min.js')
+  script(type='text/javascript', src='/javascripts/angular-ux-datagrid.min.js')  
   title Worldcup football tweets wall ( pics, hastags, tweets, live score )   
   body(ng-app="myApp", ng-controller="ctrl")
 
@@ -51,8 +52,8 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
               a(href="#", ng-click="timeout(true)", ng-show="fetch") FETCH NEW TWEETS
             li.visible-xs
               a(href="#", ng-click="timeout(false)", ng-show="!fetch") STOP FETCHING TWEETS
-            li.visible-xs
-              a(href="#", ng-click="onlyImages(true)", ng-show='!images') PICTURES ONLY
+            //- li.visible-xs
+            //-   a(href="#", ng-click="onlyImages(true)", ng-show='!images') PICTURES ONLY
             li.visible-xs
               a(href="#", ng-click="onlyImages(false)", ng-show='images') PICTURES AND TEXT
             li.visible-xs
@@ -73,8 +74,8 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
               a(href="#", ng-click="timeout(true)", ng-show="fetch") FETCH NEW TWEETS
             li
               a(href="#", ng-click="timeout(false)", ng-show="!fetch") STOP FETCHING TWEETS
-            li
-              a(href="#", ng-click="onlyImages(true)", ng-show='!images') PICTURES ONLY
+            //- li
+            //-   a(href="#", ng-click="onlyImages(true)", ng-show='!images') PICTURES ONLY
             li
               a(href="#", ng-click="onlyImages(false)", ng-show='images') PICTURES AND TEXT
             li
@@ -95,19 +96,35 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
           div.visible-xs(style='font-size: 1em;')
             span(ng-show="score") SCORE: {{score}} {{status}}                       
           div(id="scroller", tweets, key="authKey", hashtag="hashtag", button="true", hash='true', count="400", refresh="10", onlyimages="onlyimages")            
-    footer    
-      h1(style='position: relative;top: 50px;left: 20px;height: 100px;') #WorldCup
-        p(style="font: 12px/1.5 Lato, Helvetica, Arial, sans-serif;color: #777;") maintained by 
-          a(href="https://github.com/darul75", target="_blank", style="font-size: 10px; color: #FFFFFF") darul75
+    //- footer    
+    //-   h1(style='position: relative;top: 50px;left: 20px;height: 100px;') #WorldCup
+    //-     p(style="font: 12px/1.5 Lato, Helvetica, Arial, sans-serif;color: #777;") maintained by 
+    //-       a(href="https://github.com/darul75", target="_blank", style="font-size: 10px; color: #FFFFFF") darul75
               
       //- div
       //-   script(data-gittip-username="darul75" data-gittip-widget="button" src="//gttp.co/v1.js")
    
     script.
-      var app = angular.module('myApp', ['ngTwitter', 'ngRoute'])
+      var app = angular.module('myApp', ['ngTwitter', 'ngRoute', 'ux'])
       .config( ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
         $locationProvider.html5Mode(true);
       }]);
+
+      angular.module('ux').factory('overrides', function () {
+          // the datagrid instance is passed to every addon
+          return function (inst) {
+              // override the default dg.templateModel.getTemplate which looks for an _template property
+              // on each item to determine it's template. Replace it with ours that will make odd numbers
+              // have the alternate template.
+              inst.templateModel.getTemplate = function (tweet) {
+                  var name = 'default';
+                  if (tweet.hasimg) {
+                      name = 'image';
+                  }
+                  return inst.templateModel.getTemplateByName(name);
+              };
+          }
+      });
       
       function ctrl($scope, $filter, $timeout, $interval) {
         $scope.authKey = 'bzJZSlN4ZnJUYWhyeXdub2R4MzJBOkFHSmw5MnJIeEFTRkpYVW9BSm8zMEpTQzU2Wm0zNFZxZmFVZFh1TUZWamc=';
@@ -148,6 +165,9 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
 
         $scope.matchs = [
           {id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },            
+          {id: "20/06 - Switzerland vs France", value: "#SWIvsFRA OR #SWIvFRA OR #SWIFRA", route: "SWIvsFRA_2006", codeteam:'SUI',  codeawayteam:'FRA'},
+          {id: "20/06 - Italy vs Costa Rica", value: "#ITAvsCRC OR #ITAvCRC OR #ITACRC", route: "ITAvsCRC_2006", codeteam:'ITA',  codeawayteam:'CRC'},
+          {id: "20/06 - Japan vs Greek", value: "#JPNvsGRE OR JPNvGRE OR JPNGRE", route: "CMRvsCRO_2006", codeteam:'JPN',  codeawayteam:'GRE'},
           {id: "19/06 - Uruguay vs England", value: "#URUvsENG OR #URUvENG OR #URUENG", route: "URUvsENG_1906", codeteam:'URU',  codeawayteam:'ENG'},
           {id: "19/06 - Columbia vs Ivoiry", value: "#COLvsCIV OR #COLvCIV OR #COLCIV", route: "COLvsCIV_1906", codeteam:'COL',  codeawayteam:'CIV'},
           {id: "19/06 - Cameroon vs Crotia", value: "#CMRvsCRO OR CMRvCRO OR CMRCRO", route: "CMRvsCRO_1906", codeteam:'CMR',  codeawayteam:'CRO'},            
@@ -165,7 +185,7 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
           {id: "15/06 - Ivoiry vs Japan", value: "#CIVJPN OR #CIVvsJPN OR #CIVvJPN", route: "CIVvsJPN_1506", codeteam:'CIV',  codeawayteam:'JPN'},
           {id: "15/06 - England vs Italy", value: "#ENGvsITA OR #ENGvITA OR #ENGITA", route: "ENGvsITA_1506", codeteam:'ENG',  codeawayteam:'ITA'},
           {id: "14/06 - Uruguay vs Costa Rica", value: "#URUvsCRC OR #URUvCRC OR #URUCRC", route: "URUvsCRC_1406", codeteam:'URU',  codeawayteam:'CRC'},
-          {id: "14/06 - Columbia vs Greeek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406", codeteam:'COL',  codeawayteam:'GRE'},
+          {id: "14/06 - Columbia vs Greek", value: "#COLvsGRE OR #COLvGRE OR #COLGRE", route: "COLvsGRE_1406", codeteam:'COL',  codeawayteam:'GRE'},
           {id: "14/06 - Chili vs Australia", value: "#CHIvsAUS OR #CHIvAUS OR #CHIAUX", route: "CHIvsAUS_1406", codeteam:'CHI',  codeawayteam:'AUS'},
           {id: "13/06 - Spain vs Netherland", value: "#SPAvsNED OR #SPAvNED OR #SPANED", route: "SPAvsNED_1306", codeteam:'ESP',  codeawayteam:'NED'},
           {id: "13/06 - Mexique vs Cameroon", value: "#MEXvsCMR OR #MEXvCMR OR #MEXCMR", route: "MEXvsCMR_1306", codeteam:'MEX',  codeawayteam:'CMR'},
