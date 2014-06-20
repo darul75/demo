@@ -885,7 +885,7 @@ function Flow(inst, dispatch) {
         if (!current && list.length) {
             current = list[0];
             if (inst.async && current.delay !== undefined) {
-                inst.log("	delay for %c%s %sms", consoleMethodStyle, current.label, current.delay);
+                inst.log("  delay for %c%s %sms", consoleMethodStyle, current.label, current.delay);
                 clearTimeout(intv);
                 intv = setTimeout(exec, current.delay);
             } else {
@@ -910,7 +910,7 @@ function Flow(inst, dispatch) {
         inst.log("clear");
         while (list.length > len) {
             item = list.splice(len, 1)[0];
-            inst.log("	remove %s from flow", item.label);
+            inst.log("  remove %s from flow", item.label);
         }
     }
     function length() {
@@ -1454,7 +1454,7 @@ function Datagrid(scope, element, attr, $compile) {
      * @param {Boolean=} forceRender
      */
     function buildRows(list, forceRender) {
-        inst.log("	buildRows %s", list.length);
+        inst.log("  buildRows %s", list.length);
         state = states.BUILDING;
         createDom(list);
         flow.add(updateHeightValues, 0);
@@ -1470,7 +1470,7 @@ function Datagrid(scope, element, attr, $compile) {
      * Set the state to <a href="states.ON_READY">states.READY</a> and start the first render.
      */
     function ready() {
-        inst.log("	ready");
+        inst.log("  ready");
         state = states.READY;
         flow.add(fireReadyEvent);
         flow.add(safeDigest, [ scope ]);
@@ -1735,7 +1735,7 @@ function Datagrid(scope, element, attr, $compile) {
         // this needs to always be set after the dispatch of before update watchers in case they need the before activeRange.
         active.length = 0;
         // make sure not to reset until after getStartingIndex.
-        inst.log("	scroll %s visibleScrollStart %s visibleScrollEnd %s", values.scroll, loop.visibleScrollStart, loop.visibleScrollEnd);
+        inst.log("  scroll %s visibleScrollStart %s visibleScrollEnd %s", values.scroll, loop.visibleScrollStart, loop.visibleScrollEnd);
         while (loop.i < inst.rowsLength) {
             prevS = scope.$$childHead ? scopes[loop.i - 1] : null;
             offset = getRowOffset(loop.i);
@@ -1769,10 +1769,10 @@ function Datagrid(scope, element, attr, $compile) {
         if (inst.rowsLength && values.activeRange.min < 0 && values.activeRange.max < 0) {
             throw new Error(exports.errors.E1002);
         }
-        inst.log("	startIndex %s endIndex %s", loop.startIndex, loop.i);
+        inst.log("  startIndex %s endIndex %s", loop.startIndex, loop.i);
         deactivateList(lastActive);
         lastVisibleScrollStart = loop.visibleScrollStart;
-        inst.log("	activated %s", active.join(", "));
+        inst.log("  activated %s", active.join(", "));
         updateLinks();
         // update the $$childHead and $$nextSibling values to keep digest loops at a minimum count.
         // this dispatch needs to be after the digest so that it doesn't cause {} to show up in the render.
@@ -1790,7 +1790,7 @@ function Datagrid(scope, element, attr, $compile) {
             deactivateScope(scopes[lastActiveIndex]);
             inst.getRowElm(lastActiveIndex).attr("status", "inactive");
         }
-        inst.log("	deactivated %s", deactivated.join(", "));
+        inst.log("  deactivated %s", deactivated.join(", "));
     }
     /**
      * ###<a name="updateLinks">updateLinks</a>###
@@ -1884,7 +1884,7 @@ function Datagrid(scope, element, attr, $compile) {
         inst.log("render");
         if (readyToRender()) {
             waitCount = 0;
-            inst.log("	render %s", state);
+            inst.log("  render %s", state);
             // Where [states.BUILDING](#states.BUILDING) is used
             if (state === states.BUILDING) {
                 buildRows(inst.data);
@@ -1900,7 +1900,7 @@ function Datagrid(scope, element, attr, $compile) {
                 throw new Error(exports.errors.E1001);
             }
         } else {
-            inst.log("	not ready to render.");
+            inst.log("  not ready to render.");
         }
     }
     /**
@@ -1929,7 +1929,7 @@ function Datagrid(scope, element, attr, $compile) {
                 i += 1;
             }
             if (inst.data.length !== inst.normalize(newVal, inst.grouped).length) {
-                inst.log("	dirtyCheckData length is different");
+                inst.log("  dirtyCheckData length is different");
                 return true;
             }
             return false;
@@ -1944,7 +1944,7 @@ function Datagrid(scope, element, attr, $compile) {
      */
     function dirtyCheckItemTemplate(newItem, oldItem) {
         if (inst.templateModel.getTemplate(newItem) !== inst.templateModel.getTemplate(oldItem)) {
-            inst.log("	dirtyCheckData row template changed");
+            inst.log("  dirtyCheckData row template changed");
             return true;
         }
         return false;
@@ -1954,7 +1954,7 @@ function Datagrid(scope, element, attr, $compile) {
      * map the new data to the old data object and update the scopes.
      */
     function mapData(newVal) {
-        inst.log("	mapData()");
+        inst.log("  mapData()");
         inst.data = inst.setData(newVal, inst.grouped) || [];
         exports.each(inst.getData(), updateScope);
     }
@@ -1995,7 +1995,7 @@ function Datagrid(scope, element, attr, $compile) {
         }
     }
     function changeData(newVal, oldVal) {
-        inst.log("	changeData");
+        inst.log("  changeData");
         dispatch(exports.datagrid.events.ON_BEFORE_RESET);
         inst.data = inst.setData(newVal, inst.grouped) || [];
         dispatch(exports.datagrid.events.ON_AFTER_DATA_CHANGE, inst.data, oldVal);
@@ -3440,7 +3440,7 @@ exports.datagrid.coreAddons.scrollModel = function scrollModel(inst) {
         var content = inst.getContent();
         exports.each(listenerData, function(item) {
             if (item.enabled) {
-                result.log("	add %s", item.event);
+                result.log("    add %s", item.event);
                 content.bind(item.event, result[item.method]);
             }
         });
@@ -3460,7 +3460,7 @@ exports.datagrid.coreAddons.scrollModel = function scrollModel(inst) {
             result.log("removeTouchEvents");
             var content = inst.getContent();
             exports.each(listenerData, function(item) {
-                result.log("	remove %s", item.event);
+                result.log("    remove %s", item.event);
                 content.unbind(item.event, result[item.method]);
             });
         }
@@ -3591,13 +3591,13 @@ exports.datagrid.coreAddons.scrollModel = function scrollModel(inst) {
     result.capScrollValue = function(value) {
         var newVal;
         if (inst.getContentHeight() < inst.getViewportHeight()) {
-            inst.log("	CAPPED scroll value from %s to 0", value);
+            inst.log("  CAPPED scroll value from %s to 0", value);
             value = 0;
         } else if (inst.getContentHeight() - value < inst.getViewportHeight()) {
             // don't allow to scroll past the bottom.
             newVal = inst.getContentHeight() - inst.getViewportHeight();
             // this will be the bottom scroll.
-            inst.log("	CAPPED scroll value to keep it from scrolling past the bottom. changed %s to %s", value, newVal);
+            inst.log("  CAPPED scroll value to keep it from scrolling past the bottom. changed %s to %s", value, newVal);
             value = newVal;
         }
         return value;

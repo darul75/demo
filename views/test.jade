@@ -19,8 +19,10 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
   script(type='text/javascript', src='/bower_components/angular/angular.js')
   script(type='text/javascript', src='/bower_components/angular-sanitize/angular-sanitize.min.js')
   script(type='text/javascript', src='/bower_components/angular-route/angular-route.min.js')    
-  script(type='text/javascript', src='/javascripts/ng-twitter.min.js')
-  script(type='text/javascript', src='/javascripts/angular-ux-datagrid.min.js')  
+  script(type='text/javascript', src='/javascripts/ng-twitter.js')
+  script(type='text/javascript', src='/javascripts/angular-ux-datagrid.min.js')    
+  script(type='text/javascript', src='/javascripts/ux-datagrid-scrollBar.js')
+
   title Worldcup football tweets wall ( pics, hastags, tweets, live score )   
   body(ng-app="myApp", ng-controller="ctrl")
 
@@ -192,8 +194,8 @@ html(xmlns='http://www.w3.org/1999/xhtml', xmlns:og='http://ogp.me/ns#', xmlns:f
           {id: "12/06 - Brasil vs Crotia", value: "#BRAvsCRO OR #BRAvCRO OR #BRACRO", route: "BRAvsCRO_1206", codeteam:'BRA',  codeawayteam:'CRO'}
         ];
 
-        $scope.counter = 5;
-        var refresh = $scope.refresh ? $scope.refresh : 5;
+        $scope.counter = 3;
+        var refresh = $scope.refresh ? $scope.refresh : 3;
 
         $scope.onTimeout = function() {            
           $scope.search();

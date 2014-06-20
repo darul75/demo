@@ -106,7 +106,7 @@
 				restrict : 'AE',
 				scope: { key:'=', hashtag: '=', refresh:'@', button:'@', hash:'@', count:'@'},			
 				template: 					
-					'<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides">'+
+					'<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides, scrollBar" options="{scrollModel:{manual:true}}">'+
 						 
 						 '<script type="template/html" template-name="default" template-item="tweet">'+						 	
 						 	'<div class="tweet" ng-bind-html="tweet.html" style="height: 80px;"></div>'+						 					       
