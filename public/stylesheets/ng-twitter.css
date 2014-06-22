@@ -104,9 +104,10 @@ DIV.tweet {
 }*/
 
 DIV.tweet .info{
-    overflow: hidden;
-    padding: 5px 0 5px;
-    margin-left: 10px;
+  overflow: hidden;
+  padding: 1px 0;
+  margin-left: 10px;
+  float: right;
 }
 
 /* The colorful info boxes */
