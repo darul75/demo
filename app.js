@@ -278,21 +278,19 @@ app.get('/queryworldcupscore', function(req, res){
 
   var output = '';
 
-  // var req1 = http.request(opts, function(res) {
-  //   res.setEncoding('utf8');    
-  //   res.on('data', function (chunk) { 
-  //     output += chunk; });
-  //   res.on('end', fetchScore);
-  // });
-  // req1.on('error', function(e) { 
-  //   fetchScore(); 
-  // });      
-  // req1.setTimeout(1000, function() { 
-  //   fetchScore(); 
-  // });
-  // req1.end();
-
-
+  var req1 = http.request(opts, function(res) {
+    res.setEncoding('utf8');    
+    res.on('data', function (chunk) { 
+      output += chunk; });
+    res.on('end', fetchScore);
+  });
+  req1.on('error', function(e) { 
+    fetchScore(); 
+  });      
+  req1.setTimeout(10000, function() { 
+    fetchScore(); 
+  });
+  req1.end();
   
   var fetchScore = function () {
     
@@ -309,14 +307,19 @@ app.get('/queryworldcupscore', function(req, res){
           break;
         }
       }
+
+      res.json(o);
     }
 
-    catch(e) {console.log('error while fetching scores');}    
+    catch(e) {
+      console.log('error while fetching scores');
+      res.json(o);
+    }    
     
   };
 
   //fetchScore(); 
-  res.json({});
+  //res.json({});
   
 });
 

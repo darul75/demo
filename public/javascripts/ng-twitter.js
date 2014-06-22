@@ -29,12 +29,13 @@
 					var img = '';
 					angular.forEach(tweet.entities.media || [], function(entry, i) {
 						tweet.height = entry.sizes.large.h;						
+						tweet.width = entry.sizes.large.w;
 						tweet.hasimg = true;
-						img = "<a href='" + tweet.entities.media[0].expanded_url + "' target='_blank'><img class='img-rounded img-responsive' style='max-height:300px;margin-top: 5px;' src='" + escapeHTML(entry.media_url_https || entry.media_url)+"'></img></a>";
+						img = "<a href='" + tweet.entities.media[0].expanded_url + "' target='_blank'><img class='img-rounded img-responsive' style='max-height:300px;margin-top: 5px;' src='" + escapeHTML(entry.media_url_https || entry.media_url)+"' width='"+tweet.width+"' height='"+tweet.height+"'></img></a>";
         				index_map[entry.indices[0]] = [entry.indices[1], function(text) {return img}];
     				});
 
-					var result = '<table><tbody><tr><td>';					
+					var result = !onlyimages ? '<table><tbody><tr><td>' : '';					
 					var last_i = 0;
 					var i = 0;										
 
@@ -63,10 +64,11 @@
 						'</span>';
 					}
 					else {
-						result += img;
+						result = tweet.hasimg ? '<table><tbody><tr><td>' + img + '</td></tr></tbody></table>' : '';
 					}	
 
-					result += '</td></tr></tbody></table>';				
+					if (!onlyimages)
+						result += '</td></tr></tbody></table>';				
 
 					return sce.trustAsHtml(result);
 				}
@@ -105,26 +107,48 @@
 			return {
 				restrict : 'AE',
 				scope: { key:'=', hashtag: '=', refresh:'@', button:'@', hash:'@', count:'@'},			
-				template: 					
-					'<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides, scrollBar" options="{scrollModel:{manual:true}}">'+
-						 
-						 '<script type="template/html" template-name="default" template-item="tweet">'+						 	
-						 	'<div class="tweet" ng-bind-html="tweet.html" style="height: 80px;"></div>'+						 					       
-					     '</script>'+
-					     '<script type="template/html" template-name="image" template-item="tweet">'+						 	
-						 	'<div class="tweet" ng-bind-html="tweet.html" style="height:380px;"></div>'+											       
-					     '</script>'+
-					     
-					'</div>',	
+				template:
+					'<div><div ng-if="!onlyimages">'+
+						'<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides, listLoader, iScrollAddon, disableHoverWhileScrolling" data-options="{scrollModel:{manual:false}}">'+
+						// '<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides, statsModel, gridLogger" data-options="{debug:{all:1, Flow:0}}">'+
+							 
+							 '<script type="template/html" template-name="default" template-item="tweet">'+						 	
+							 	'<div class="tweet" ng-bind-html="tweet.html" style="height: 80px;"></div>'+						 					       
+						     '</script>'+
+						     '<script type="template/html" template-name="image" template-item="tweet">'+						 	
+							 	'<div class="tweet" ng-bind-html="tweet.html" style="height:400px;"></div>'+											       
+						     '</script>'+
+						     
+						'</div>'+
+					'</div>'+
+					'<div ng-if="onlyimages">'+
+
+						'<div data-ux-datagrid="tweets" class="datagrid data-addons="listLoader, iScrollAddon, disableHoverWhileScrolling" data-options="{scrollModel:{manual:false}}">'+						
+							 							 
+						     '<script type="template/html" template-name="default" template-item="tweet">'+						 	
+							 	'<div class="tweet" ng-bind-html="tweet.html" style="height:330px;"></div>'+											       
+						     '</script>'+
+						     
+						'</div>'+
+						// '<div ng-repeat="tweet in tweets" class="tweet" ng-if="tweet.hasimg" ng-bind-html="prettyDisplay(tweet)" || (tweet.entities.media && tweet.entities.media[0])"></div>'+
+					'</div></div>'	
+					,	
 					// OLD ONE				
-					// <div ng-repeat="tweet in tweets track by tweet.id" class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></div>
+					// '<div ng-repeat="tweet in tweets track by tweet.id" class="tweet" ng-bind-html="prettyDisplay(tweet)" ng-if="!onlyimages || (tweet.entities.media && tweet.entities.media[0])"></div>',
+
 				link : function(scope, elt, attrs) {
 
 					scope.matchs = [
 						{id: "WorldCup #tweets", value: "#worldcup", route: "worldcup" },
+						{id: "22/06 - South Korea vs Algeria", value: "#KORvsALG OR #KORvALG OR #KORALG", route: "KORvsALG_2206", codeteam:'KOR',  codeawayteam:'ALG'},
+				        {id: "22/06 - Belgium vs Russia", value: "#BELvsRUS OR #BELvRUS OR #BELRUS", route: "BELvsRUS_2206", codeteam:'BEL',  codeawayteam:'RUS'},
+				        {id: "22/06 - Nigeria vs Bosnia", value: "#NIGvsBOS OR NIGvBOS OR NIGBOS", route: "NIGvsBOS_2206", codeteam:'NIG',  codeawayteam:'BIH'},
+						{id: "21/06 - Germany vs Ghana", value: "#GERvsGHA OR #GERvGHA OR #GERGHA", route: "GERvsGHA_2106", codeteam:'GER',  codeawayteam:'GHA'},
+				        {id: "21/06 - Argentina vs Iran", value: "#ARGvsIRA OR #ARGvIRA OR #ARGIRA", route: "ARGvsIRA_2106", codeteam:'ARG',  codeawayteam:'IRN'},
+				        {id: "21/06 - Hondura vs Equator", value: "#HONvsECU OR HONvECU OR HONECU", route: "HONvsECU_2106", codeteam:'HON',  codeawayteam:'ECU'},
 						{id: "20/06 - Switzerland vs France", value: "#SWIvsFRA OR #SWIvFRA OR #SWIFRA", route: "SWIvsFRA_2006", codeteam:'SUI',  codeawayteam:'FRA'},
 			            {id: "20/06 - Italy vs Costa Rica", value: "#ITAvsCRC OR #ITAvCRC OR #ITACRC", route: "ITAvsCRC_2006", codeteam:'ITA',  codeawayteam:'CRC'},
-				        {id: "20/06 - Japan vs Greek", value: "#JPNvsGRE OR JPNvGRE OR JPNGRE", route: "CMRvsCRO_2006", codeteam:'JPN',  codeawayteam:'GRE'},
+				        {id: "20/06 - Japan vs Greek", value: "#JPNvsGRE OR JPNvGRE OR JPNGRE", route: "JPNvsGRE_2006", codeteam:'JPN',  codeawayteam:'GRE'},
 						{id: "19/06 - Uruguay vs England", value: "#URUvsENG OR #URUvENG OR #URUENG", route: "URUvsENG_1906", codeteam:'URU',  codeawayteam:'ENG'},
 			            {id: "19/06 - Columbia vs Ivoiry", value: "#COLvsCIV OR #COLvCIV OR #COLCIV", route: "COLvsCIV_1906", codeteam:'COL',  codeawayteam:'CIV'},
 			            {id: "19/06 - Cameroon vs Crotia", value: "#CMRvsCRO OR CMRvCRO OR CMRCRO", route: "CMRvsCRO_1906", codeteam:'CMR',  codeawayteam:'CRO'},            
@@ -180,17 +204,51 @@
 						// LOCAL MODE BUT CORS
 						scope.$watch('hashtag', function(newValue, oldValue) {
 							if ( newValue !== oldValue) {
-								scope.search();
-								//scope.scroll();								
+								scope.search();																			
 							}
 						});
 
 					};
 
+					scope.popTweets = [];					
+
+					var popit = function() {
+						var newOnes = [];
+						var i = 0;
+						var l = scope.first ? 15 : 30;						
+						if (scope.popTweets.length / l >= 1) {
+							while (i < l) {
+								var elt = scope.popTweets.pop();
+								elt.html = scope.prettyDisplay(elt);										
+								if (scope.onlyimages && elt.hasimg)
+									newOnes.push(elt);			
+								// else if (scope.onlyimages && !elt.hasimg)
+								// 	popTweets.push(elt);				
+								else if (elt && !scope.onlyimages)
+									newOnes.push(elt);								
+								i++;
+							}
+						}
+
+						var test = scope.onlyimages ? true : newOnes.length == l;
+						if (newOnes.length > 0 && test) {
+							var old = scope.tweets;
+							var newOne = old.concat(newOnes);
+							scope.tweets = newOne;							
+						}
+							
+					}
+
+					//var a = setInterval(popit, 3000);
+					var timeoutSearch = interval(popit, 8000);
+					scope.first = true;
+
 					scope.search = function() {
 						var query = scope.hashtag.value || scope.hashtag;
 
-						var result = {};						
+						var result = {};	
+
+						$('.loader').show();					
 
 						service.asyncSearch(query, since_id).then(function(d) {
 							scope.counter = refresh;
@@ -209,10 +267,11 @@
 								var skipping = 0;
 								for (var i = 0;i<newTweets.length;i++) {
 									var newTweet = newTweets[i];
-									scope.RT = !newTweet.retweeted && !scope.tweetIDs[newTweet.id];
+									scope.RT = true; //!newTweet.retweeted && !scope.tweetIDs[newTweet.id];
 									if (scope.RT) {
-										scope.tweetIDs[newTweet.id] = true;
-										newTweet.html = scope.prettyDisplay(newTweet);										
+										// scope.tweetIDs[newTweet.id] = true;																	
+										
+										
 										concatTweets.push(newTweet);
 									}
 									else {
@@ -220,42 +279,35 @@
 									}
 								}
 
-								scope.tweets = newerFirst ? concatTweets.concat(scope.tweets) : scope.tweets.concat(concatTweets);
+								scope.popTweets = newerFirst ? concatTweets.concat(scope.popTweets) : scope.popTweets.concat(concatTweets);
+								//scope.tweets = newerFirst ? concatTweets.concat(scope.tweets) : scope.tweets.concat(concatTweets);
+
+								if (scope.first) {
+									popit();
+									scope.first = false;									
+								}
 
 								scope.length = scope.tweets.length;
 
 								result.count = scope.length;
 								result.skipping = skipping;
 
-								// scores.asyncSearch(scope.hashtag.codeteam, scope.hashtag.codeawayteam).then(function(d) {
-
-								// 	if (d && d.data && d.data.away_team >= 0 && d.data.home_team >= 0 ) {
-								// 		result.home_team = d.data.home_team;
-								// 		result.away_team = d.data.away_team;
-								// 		result.status = d.data.status;										
-								// 	}
-
-									
-								// }, function(err) {
-								// 	console.log(err);
-								// });	
-
 								scope.$emit('searchResult', result);							
 																	
-								since_id = d.data.search_metadata.since_id;
+								//since_id = d.data.search_metadata.since_id;
 							}							
 						});
 					};						
 
-					$("#scroller").hover(function(){
-			            if (scope.scrollInterval) {							
-							interval.cancel(scope.scrollInterval);
-							scope.scrollInterval = null;							
-							$("html, body").stop(true);
-						}
-			        }, function(){
-			            //tweenToNewSpeed(controller.fullSpeed);
-			        });								
+					// $("#scroller").hover(function(){
+			  //           if (scope.scrollInterval) {							
+					// 		interval.cancel(scope.scrollInterval);
+					// 		scope.scrollInterval = null;							
+					// 		$("html, body").stop(true);
+					// 	}
+			  //       }, function(){
+			  //           //tweenToNewSpeed(controller.fullSpeed);
+			  //       });								
 
 					scope.scrollTop = function() {						
 						$("html, body").animate({ scrollTop: 0 });													 				 
@@ -269,7 +321,7 @@
 						return linkify.linkify_entities(tweet, scope.onlyimages);
 					};
 
-					scope.images = function(active) {
+					scope.images = function(active) {						
 						scope.onlyimages = active;
 					};					
 
@@ -279,6 +331,9 @@
 
 					scope.$on('images', function(e, msg) {
 						timeout(function() {
+							scope.tweets = [];	
+							scope.popTweets = [];			     					
+				      		scope.first = true;
 							scope.images(msg.active);
 							// scope.onlyImages = msg.active;
 							// //var el = angular.element(elt.html());							
@@ -292,6 +347,25 @@
 						scope.scroll();
 					});
 
+					var fetchScoreTimeout = function() {  
+
+						scores.asyncSearch(scope.hashtag.codeteam, scope.hashtag.codeawayteam).then(function(d) {
+							if (d && d.data && d.data.away_team >= 0 && d.data.home_team >= 0 ) {
+								var result = {};
+
+								result.home_team = d.data.home_team;
+								result.away_team = d.data.away_team;
+								result.status = d.data.status;
+
+								scope.$emit('scoreResult', result);										
+							}							
+						}, function(err) {
+							console.log(err);
+						});	          			         			          
+			        };		
+
+					var scoretimeout = interval(fetchScoreTimeout, 8000);					
+
 					scope.resetTweets = function() {						
 						location.path('/worldcup/'+scope.hashtag.route);
 					};
@@ -299,8 +373,10 @@
 				    rootScope.$on( "$locationChangeSuccess", function(event, next, current) {
 
 				    	scope.tweets = [];
+				    	scope.popTweets = [];
 				     						
 				      	var currentPath = location.path();				      	
+				      	scope.first = true;
 
 				      	scope.hashtag = scope.matchs[0];
 
