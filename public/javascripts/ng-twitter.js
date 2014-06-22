@@ -109,21 +109,21 @@
 				scope: { key:'=', hashtag: '=', refresh:'@', button:'@', hash:'@', count:'@'},			
 				template:
 					'<div><div ng-if="!onlyimages">'+
-						'<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides, listLoader, iScrollAddon, disableHoverWhileScrolling" data-options="{scrollModel:{manual:false}}">'+
+						'<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides, listLoader, iScrollAddon" data-options="{scrollModel:{manual:false}}">'+
 						// '<div data-ux-datagrid="tweets" class="datagrid" data-addons="overrides, statsModel, gridLogger" data-options="{debug:{all:1, Flow:0}}">'+
 							 
 							 '<script type="template/html" template-name="default" template-item="tweet">'+						 	
-							 	'<div class="tweet" ng-bind-html="tweet.html" style="height: 80px;"></div>'+						 					       
+							 	'<div class="tweet" ng-bind-html="tweet.html" style="height: 75px;"></div>'+						 					       
 						     '</script>'+
 						     '<script type="template/html" template-name="image" template-item="tweet">'+						 	
-							 	'<div class="tweet" ng-bind-html="tweet.html" style="height:400px;"></div>'+											       
+							 	'<div class="tweet" ng-bind-html="tweet.html" style="height:395px;"></div>'+											       
 						     '</script>'+
 						     
 						'</div>'+
 					'</div>'+
 					'<div ng-if="onlyimages">'+
 
-						'<div data-ux-datagrid="tweets" class="datagrid data-addons="listLoader, iScrollAddon, disableHoverWhileScrolling" data-options="{scrollModel:{manual:false}}">'+						
+						'<div data-ux-datagrid="tweets" class="datagrid data-addons="listLoader, iScrollAddon" data-options="{scrollModel:{manual:false}}">'+						
 							 							 
 						     '<script type="template/html" template-name="default" template-item="tweet">'+						 	
 							 	'<div class="tweet" ng-bind-html="tweet.html" style="height:330px;"></div>'+											       
