@@ -141,8 +141,12 @@ app.get('/', function(req, res){
     res.render('test');
 });
 
+app.get('/worldcup', function(req, res){ 
+    res.render('worldcup');
+});
+
 app.get('/worldcup/*', function(req, res){ 
-    res.render('test');
+    res.render('worldcup');
 });
 
 /*app.get('/partials/test', function(req, res){ 
