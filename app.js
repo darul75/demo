@@ -189,6 +189,10 @@ app.get('/twitter', function(req, res) {
   res.end(app.get("tweetJSON"));
 });
 
+app.get('/audio', function(req, res){ 
+  res.render('audio');
+});
+
 var lastUrls = [];
 
 app.post('/capturewebquery', function(req, res){ 
